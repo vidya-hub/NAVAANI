@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "521775103831",
+    "firebase_url": "https://blood-bank-flutter-215c3.firebaseio.com",
+    "project_id": "blood-bank-flutter-215c3",
+    "storage_bucket": "blood-bank-flutter-215c3.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:521775103831:android:9b5e948171ab88dc27c812",
+        "android_client_info": {
+          "package_name": "com.example.hideden_drawer_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "521775103831-2q8kpn3nsfkblf3ok9tk7s0dehdfgb5l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.hideden_drawer_flutter",
+            "certificate_hash": "f4aebb7b6a2552d9ed3d3ba1739a672224375d20"
+          }
+        },
+        {
+          "client_id": "521775103831-0abojcstnklk7707nsrt199pf8pht7ag.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDldDZJFqbYNQ_KNgJR_2e-8lRLgPUoLSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "521775103831-0abojcstnklk7707nsrt199pf8pht7ag.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
