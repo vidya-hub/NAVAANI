@@ -35,16 +35,10 @@ dependencies:
   drawerbehavior: 
   font_awesome_flutter:
   rxdart:
-  # firebase_auth:
-  # cloud_firestore:
-  # firebase_storage:
   flutter_svg: ^0.18.0
   line_awesome_flutter: 
   flutter_screenutil: 
   animated_theme_switcher: 
-
-  # The following adds the Cupertino Icons font to your application.
-  # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^0.1.3
   eva_icons_flutter:
 
