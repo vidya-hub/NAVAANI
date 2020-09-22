@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navaninew/HomeScreen.dart';
 import 'package:navaninew/components/wishlistcard.dart';
-import 'package:navaninew/configuration.dart';
+// import 'package:navaninew/configuration.dart';
 
 class WishList extends StatefulWidget {
   @override

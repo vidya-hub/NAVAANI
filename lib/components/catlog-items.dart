@@ -6,11 +6,19 @@ import 'package:fancy_shimmer_image/fancy_shimmer_image.dart';
 
 class CatalogItemOne extends StatelessWidget {
   final String imageURL;
-  final bool isNew;
+  final String isNew;
+  final String name;
+  final String price;
+  final String desCription;
   final double marginOnRight;
 
   CatalogItemOne(
-      {@required this.imageURL, this.isNew = false, this.marginOnRight = 13.0});
+      {@required this.imageURL,
+      this.isNew,
+      this.desCription,
+      this.name,
+      this.price,
+      this.marginOnRight = 13.0});
 
   @override
   Widget build(BuildContext context) {
@@ -55,23 +63,19 @@ class CatalogItemOne extends StatelessWidget {
                         )
                       ],
                     ),
-                    isNew
-                        ? Positioned(
-                            top: 8,
-                            left: 8,
-                            child: Container(
-                              decoration: BoxDecoration(
-                                color: ThemeColor.BLACK,
-                                borderRadius:
-                                    BorderRadius.all(Radius.circular(4)),
-                              ),
-                              padding: EdgeInsets.all(5),
-                              child: Text('New',
-                                  style: TextStyle(
-                                      fontSize: 11,
-                                      color: ThemeColor.SECONDARY)),
-                            ))
-                        : Container(),
+                    Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: ThemeColor.BLACK,
+                            borderRadius: BorderRadius.all(Radius.circular(4)),
+                          ),
+                          padding: EdgeInsets.all(5),
+                          child: Text(isNew,
+                              style: TextStyle(
+                                  fontSize: 11, color: ThemeColor.SECONDARY)),
+                        )),
                     // Like button
                     Positioned(
                       right: 0.5,
@@ -95,23 +99,27 @@ class CatalogItemOne extends StatelessWidget {
                 SizedBox(height: 8.0),
 
                 // Company name
-                Text('Mango Boy',
+                Text('$name',
                     style: Theme.of(context)
                         .textTheme
-                        .bodyText2
+                        .bodyText1
                         .copyWith(color: ThemeColor.FILL)),
 
                 SizedBox(height: 5.0),
                 // Item name
-                Text('T-Shirt Sailing',
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline5
-                        .copyWith(fontWeight: FontWeight.w600)),
+                Text(
+                  '$desCription',
+                  style: TextStyle(
+                      fontSize: MediaQuery.of(context).size.width * 0.03),
+                ),
+                // style: Theme.of(context)
+                //     .textTheme
+                //     .headline1
+                //     .copyWith(fontWeight: FontWeight.w600)),
 
                 SizedBox(height: 3.0),
                 // Item price
-                Text('26\$', style: Theme.of(context).textTheme.button)
+                Text('$price\$', style: Theme.of(context).textTheme.button)
               ],
             )),
       ),

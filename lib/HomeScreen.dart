@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navaninew/DrawerScreen.dart';
-import 'package:navaninew/constant/api.dart';
+// import 'package:navaninew/constant/api.dart';
 import 'package:navaninew/profile_page.dart';
 import 'package:navaninew/components/catlog-items.dart';
 import 'package:navaninew/components/imgslider.dart';
@@ -101,15 +101,48 @@ class _HomeScreenState extends State<HomeScreen> {
     'icons/ring.png',
     'icons/earrings.png'
   ];
+  List menUrls = [];
+  List girlUrls = [];
+  List kidboyUrls = [];
+  List kidGirlUrls = [];
   @override
   void initState() {
     super.initState();
+    getProducts(productsUrl);
+    getProducts(productsUrl).then(
+      (value) async {
+        var data = await json.decode(value.body);
+        for (var item in data) {
+          if (item["type"] == "MenCloth") {
+            setState(() {
+              menUrls.add(item);
+            });
+          } else if (item["type"] == "GirlCloth") {
+            setState(() {
+              girlUrls.add(item);
+            });
+          } else if (item["type"] == "KidBoys") {
+            setState(() {
+              kidboyUrls.add(item);
+            });
+          } else if (item["type"] == "KidGirl") {
+            setState(() {
+              kidGirlUrls.add(item);
+            });
+          }
+        }
+        print(data);
+        print(menUrls.length);
+      },
+    );
     // print(widget.userId);
   }
 
   Future getProducts(String url) async {
     var response = await http.get(url);
-    return response.body;
+
+    print(response);
+    return response;
   }
 
   @override
@@ -195,26 +228,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      getProducts(productsUrl).then(
-                        (value) => {
-                          print(value),
-                        },
+                      print("tap");
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Shop(),
+                        ),
                       );
-                      // print("tap");
-                      // Navigator.push(
-                      //   context,
-                      //   MaterialPageRoute(
-                      //     builder: (context) => Shop(),
-                      //   ),
-                      // );
                     },
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.08,
                       width: MediaQuery.of(context).size.width * 0.9,
-                      // padding: EdgeInsets.symmetric(
-                      //     horizontal: 15.0, vertical: 15.0),
-                      // margin:
-                      //     EdgeInsets.symmetric(vertical: 10, horizontal: 20.0),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         boxShadow: [
@@ -306,36 +330,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                   ),
-
-                  // Container(
-                  //   height: MediaQuery.of(context).size.height * 0.1,
-                  //   color: Colors.white,
-                  //   width: MediaQuery.of(context).size.width,
-                  //   child: ListView.builder(
-                  //     scrollDirection: Axis.horizontal,
-                  //     itemCount: catagories.length,
-                  //     itemBuilder: (context, index) {
-                  //       return Container(
-                  //         // padding: EdgeInsets.all(10),
-                  //         height: MediaQuery.of(context).size.height * 0.06,
-                  //         width: MediaQuery.of(context).size.width * 0.13,
-                  //         margin: EdgeInsets.only(
-                  //             left: MediaQuery.of(context).size.width * 0.09),
-                  //         child: CircleAvatar(
-                  //           backgroundColor: Colors.blue,
-                  //           child: Center(
-                  //             child: Image.asset(
-                  //               catagories[index]['iconPath'],
-                  //               // height: MediaQuery.of(context).size.height * 0.06,
-                  //               // width: MediaQuery.of(context).size.height * 0.008,
-                  //               // color: Colors.grey[700],
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
                   SingleChildScrollView(
                     child: CarouselSlider(
                       options: CarouselOptions(
@@ -352,94 +346,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 1.0,
                   ),
-                  // SizedBox(height: 30.0),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Trending Collection',
-                                  style: Theme.of(context).textTheme.headline6),
-                              SizedBox(height: 4.0),
-                              // Spacer(),
-                              Text('Summer Sale Collection',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2
-                                      .apply(color: ThemeColor.FILL)),
-                            ]),
-                        // Spacer(),
-                        GestureDetector(
-                            child: Text('View All',
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold)),
-                            onTap: () {})
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 1.0,
-                  ),
-
-                  FutureBuilder<List<dynamic>>(
-                    future: API.fetchUsers(),
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      if (snapshot.hasData) {
-                        print('printtt');
-                        print(snapshot.data[0]['url']);
-                        print(snapshot.data[0]);
-
-                        return ListView.builder(
-                            padding: EdgeInsets.all(8),
-                            itemCount: snapshot.data.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return ListView.builder(
-                                  physics: BouncingScrollPhysics(),
-                                  scrollDirection: Axis.horizontal,
-                                  itemCount: collectionData.length,
-                                  itemBuilder: (BuildContext ctxt, int index) {
-                                    return Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: CatalogItemOne(
-                                        imageURL: snapshot.data[index]['url'],
-                                        isNew: snapshot.data[index]['type'],
-                                      ),
-                                    );
-                                  });
-                            });
-                      } else {
-                        return Center(child: CircularProgressIndicator());
-                      }
-                    },
-                  ),
-
-                  // Container(
-                  //   // padding: EdgeInsets.only(
-                  //   //     left: MediaQuery.of(context).size.width * 0.09),
-                  //   child: SizedBox(
-                  //     height: 400.0,
-                  //     child: ListView.builder(
-                  //         physics: BouncingScrollPhysics(),
-                  //         scrollDirection: Axis.horizontal,
-                  //         itemCount: collectionData.length,
-                  //         itemBuilder: (BuildContext ctxt, int index) {
-                  //           return Padding(
-                  //             padding: const EdgeInsets.all(8.0),
-                  //             child: CatalogItemOne(
-                  //               imageURL: collectionData[index]['imgURL'],
-                  //               isNew: collectionData[index]['isNew'],
-                  //             ),
-                  //           );
-                  //         }),
-                  //   ),
-                  // ),
                   SizedBox(height: 10.0),
-
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
@@ -449,7 +356,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('New Jewels Collection',
+                              Text('New Mens Collection',
                                   style: Theme.of(context).textTheme.headline6),
                               SizedBox(height: 4.0),
                               // Spacer(),
@@ -470,29 +377,30 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   SizedBox(
-                    height: 1.0,
+                    height: 5.0,
                   ),
                   Container(
-                    // padding: EdgeInsets.only(
-                    //     left: MediaQuery.of(context).size.width * 0.09),
                     child: SizedBox(
                       height: 400.0,
                       child: ListView.builder(
                           physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
-                          itemCount: collectionData.length,
+                          itemCount: menUrls.length,
                           itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: CatalogItemOne(
-                                imageURL: jewelsdata[index]['imgURL'],
-                                isNew: collectionData[index]['isNew'],
+                                imageURL: menUrls[index]["url"],
+                                isNew: menUrls[index]['type'],
+                                name: menUrls[index]['name'],
+                                price: menUrls[index]['price'].toString(),
+                                desCription: menUrls[index]['Description'],
                               ),
                             );
                           }),
                     ),
                   ),
-                  SizedBox(height: 10.0),
+                  SizedBox(height: 5.0),
                   Container(
                     margin: EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
@@ -502,7 +410,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Retro Style',
+                            Text('New Girls Collection',
                                 style: Theme.of(context).textTheme.headline6),
                             SizedBox(height: 4.0),
                             // Spacer(),
@@ -523,50 +431,139 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-
-                  SizedBox(height: 22),
-
-                  GestureDetector(
-                    onTap: () {},
+                  SizedBox(height: 5),
+                  Container(
+                    // padding: EdgeInsets.only(
+                    //     left: MediaQuery.of(context).size.width * 0.09),
                     child: SizedBox(
                       height: 400.0,
                       child: ListView.builder(
                           physics: BouncingScrollPhysics(),
                           scrollDirection: Axis.horizontal,
-                          itemCount: collectionData.length,
+                          itemCount: girlUrls.length,
                           itemBuilder: (BuildContext ctxt, int index) {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: CatalogItemOne(
-                                imageURL: collectionData[index]['imgURL'],
-                                isNew: collectionData[index]['isNew'],
+                                imageURL: girlUrls[index]["url"],
+                                isNew: girlUrls[index]['type'],
+                                name: girlUrls[index]['name'],
+                                price: girlUrls[index]['price'].toString(),
+                                desCription: girlUrls[index]['Description'],
                               ),
                             );
                           }),
                     ),
                   ),
-
-                  // Row(
-                  //   crossAxisAlignment: CrossAxisAlignment.center,
-                  //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //   children: [
-                  //     Column(
+                  SizedBox(height: 5.0),
+                  Container(
+                    margin: EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text('New Kids Collection',
+                                style: Theme.of(context).textTheme.headline6),
+                            SizedBox(height: 4.0),
+                            // Spacer(),
+                            Text('Olg gauge Collection',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .bodyText2
+                                    .apply(color: ThemeColor.FILL)),
+                          ],
+                        ),
+                        // Spacer(),
+                        GestureDetector(
+                            child: Text('View All',
+                                style: TextStyle(
+                                    fontSize: 15.0,
+                                    fontWeight: FontWeight.bold)),
+                            onTap: () {})
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 5),
+                  Container(
+                    // padding: EdgeInsets.only(
+                    //     left: MediaQuery.of(context).size.width * 0.09),
+                    child: SizedBox(
+                      height: 400.0,
+                      child: ListView.builder(
+                          physics: BouncingScrollPhysics(),
+                          scrollDirection: Axis.horizontal,
+                          itemCount: kidboyUrls.length,
+                          itemBuilder: (BuildContext ctxt, int index) {
+                            return Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: CatalogItemOne(
+                                imageURL: kidboyUrls[index]["url"],
+                                isNew: kidboyUrls[index]['type'],
+                                name: kidboyUrls[index]['name'],
+                                price: kidboyUrls[index]['price'].toString(),
+                                desCription: kidboyUrls[index]['Description'],
+                              ),
+                            );
+                          }),
+                    ),
+                  ),
+                  // SizedBox(height: 5.0),
+                  // Container(
+                  //   margin: EdgeInsets.symmetric(horizontal: 10),
+                  //   child: Row(
+                  //     crossAxisAlignment: CrossAxisAlignment.center,
+                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  //     children: [
+                  //       Column(
                   //         crossAxisAlignment: CrossAxisAlignment.start,
                   //         children: [
-                  //           Text('Trending Collection',
-                  //               style: Theme.of(context).textTheme.headline2),
+                  //           Text('New Kids Collection',
+                  //               style: Theme.of(context).textTheme.headline6),
                   //           SizedBox(height: 4.0),
-                  //           Text('Summer Sale Collection',
+                  //           // Spacer(),
+                  //           Text('Olg gauge Collection',
                   //               style: Theme.of(context)
                   //                   .textTheme
                   //                   .bodyText2
-                  //                   .apply(color: Colors.white)),
-                  //         ]),
-                  //     GestureDetector(
-                  //         child:
-                  //             Text('View All', style: TextStyle(fontSize: 12.0)),
-                  //         onTap: () {})
-                  //   ],
+                  //                   .apply(color: ThemeColor.FILL)),
+                  //         ],
+                  //       ),
+                  //       // Spacer(),
+                  //       GestureDetector(
+                  //           child: Text('View All',
+                  //               style: TextStyle(
+                  //                   fontSize: 15.0,
+                  //                   fontWeight: FontWeight.bold)),
+                  //           onTap: () {})
+                  //     ],
+                  //   ),
+                  // ),
+                  // SizedBox(height: 5),
+                  // Container(
+                  //   // padding: EdgeInsets.only(
+                  //   //     left: MediaQuery.of(context).size.width * 0.09),
+                  //   child: SizedBox(
+                  //     height: 400.0,
+                  //     child: ListView.builder(
+                  //         physics: BouncingScrollPhysics(),
+                  //         scrollDirection: Axis.horizontal,
+                  //         itemCount: kidGirlUrls.length,
+                  //         itemBuilder: (BuildContext ctxt, int index) {
+                  //           return Padding(
+                  //             padding: const EdgeInsets.all(8.0),
+                  //             child: CatalogItemOne(
+                  //               imageURL: kidGirlUrls[index]["url"],
+                  //               isNew: kidGirlUrls[index]['type'],
+                  //               name: kidGirlUrls[index]['name'],
+                  //               price: kidGirlUrls[index]['price'].toString(),
+                  //               desCription: kidGirlUrls[index]['Description'],
+                  //             ),
+                  //           );
+                  //         }),
+                  //   ),
                   // ),
                 ],
               ),
