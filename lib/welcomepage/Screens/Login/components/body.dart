@@ -56,6 +56,7 @@ class _BodyState extends State<Body> {
 
   String helpertext;
   bool incorrect = false;
+  bool _isProgress = false;
 
   @override
   Widget build(BuildContext context) {
@@ -144,45 +145,56 @@ class _BodyState extends State<Body> {
                     ],
                   )
                 : Container(),
-            RoundedButton(
-                text: "LOGIN",
-                press: () async {
-                  var loginbody =
-                      await logIn_api(_userName.text.trim(), _passWord.text.trim());
-                  if (loginbody != "[]") {
-                    print(json.decode(loginbody)[0]['_id']);
-                    Navigator.push(
-                      context,
-                    MaterialPageRoute(
-                      builder: (context) {
-                        return HomeScreen(
-                          userId: json.decode(loginbody)[0]['_id'],
-                        );
-                      },
-                    ),
-                    );
-                  } else {
-                    print("null data");
-                    // print(await checkUsername(_userName.text));
-                    if (await checkUsername(_userName.text.trim()) == "false") {
-                      // user is there 
-                      print("password is not correct");
+            _isProgress == true
+                ? Center(child: CircularProgressIndicator())
+                : RoundedButton(
+                    text: "LOGIN",
+                    press: () async {
                       setState(() {
-                        incorrect = true; //password is not correct
-                        helpertext = null;
+                        _isProgress = true;
                       });
-                    } else if (await checkUsername(_userName.text.trim()) == "true") {
-                      // user is not there
-                      print("username is not correct");
-                      setState(() {
-                        helpertext = "User Name Is Incorrect";
-                        //User Name Is Incorrect
 
-                        incorrect = false;
+                      var loginbody = await logIn_api(
+                          _userName.text.trim(), _passWord.text.trim());
+                      if (loginbody != "[]") {
+                        print(json.decode(loginbody)[0]['_id']);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) {
+                              return HomeScreen(
+                                userId: json.decode(loginbody)[0]['_id'],
+                              );
+                            },
+                          ),
+                        );
+                      } else {
+                        print("null data");
+                        // print(await checkUsername(_userName.text));
+                        if (await checkUsername(_userName.text.trim()) ==
+                            "false") {
+                          // user is there
+                          print("password is not correct");
+                          setState(() {
+                            incorrect = true; //password is not correct
+                            helpertext = null;
+                          });
+                        } else if (await checkUsername(_userName.text.trim()) ==
+                            "true") {
+                          // user is not there
+                          print("username is not correct");
+                          setState(() {
+                            helpertext = "User Name Is Incorrect";
+                            //User Name Is Incorrect
+                            incorrect = false;
+                          });
+                        }
+                      }
+                      setState(() {
+                        _isProgress = false;
                       });
-                    }
-                  }
-                }),
+                    },
+                  ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               press: () {
