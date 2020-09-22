@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:navaninew/DrawerScreen.dart';
+import 'package:navaninew/constant/api.dart';
 import 'package:navaninew/profile_page.dart';
 import 'package:navaninew/components/catlog-items.dart';
 import 'package:navaninew/components/imgslider.dart';
@@ -26,10 +27,10 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  double xOffset = 0.0;
-  double yOffset = 0.0;
-  double scaleFactor = 1;
-  bool isDrawerOpen = false;
+  // double xOffset = 0.0;
+  // double yOffset = 0.0;
+  // double scaleFactor = 1;
+  // bool isDrawerOpen = false;
   List collectionData = [
     {
       'imgURL':
@@ -384,26 +385,59 @@ class _HomeScreenState extends State<HomeScreen> {
                   SizedBox(
                     height: 1.0,
                   ),
-                  Container(
-                    // padding: EdgeInsets.only(
-                    //     left: MediaQuery.of(context).size.width * 0.09),
-                    child: SizedBox(
-                      height: 400.0,
-                      child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: collectionData.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CatalogItemOne(
-                                imageURL: collectionData[index]['imgURL'],
-                                isNew: collectionData[index]['isNew'],
-                              ),
-                            );
-                          }),
-                    ),
+
+                  FutureBuilder<List<dynamic>>(
+                    future: API.fetchUsers(),
+                    builder: (BuildContext context, AsyncSnapshot snapshot) {
+                      if (snapshot.hasData) {
+                        print('printtt');
+                        print(snapshot.data[0]['url']);
+                        print(snapshot.data[0]);
+
+                        return ListView.builder(
+                            padding: EdgeInsets.all(8),
+                            itemCount: snapshot.data.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListView.builder(
+                                  physics: BouncingScrollPhysics(),
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: collectionData.length,
+                                  itemBuilder: (BuildContext ctxt, int index) {
+                                    return Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: CatalogItemOne(
+                                        imageURL: snapshot.data[index]['url'],
+                                        isNew: snapshot.data[index]['type'],
+                                      ),
+                                    );
+                                  });
+                            });
+                      } else {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                    },
                   ),
+
+                  // Container(
+                  //   // padding: EdgeInsets.only(
+                  //   //     left: MediaQuery.of(context).size.width * 0.09),
+                  //   child: SizedBox(
+                  //     height: 400.0,
+                  //     child: ListView.builder(
+                  //         physics: BouncingScrollPhysics(),
+                  //         scrollDirection: Axis.horizontal,
+                  //         itemCount: collectionData.length,
+                  //         itemBuilder: (BuildContext ctxt, int index) {
+                  //           return Padding(
+                  //             padding: const EdgeInsets.all(8.0),
+                  //             child: CatalogItemOne(
+                  //               imageURL: collectionData[index]['imgURL'],
+                  //               isNew: collectionData[index]['isNew'],
+                  //             ),
+                  //           );
+                  //         }),
+                  //   ),
+                  // ),
                   SizedBox(height: 10.0),
 
                   Container(

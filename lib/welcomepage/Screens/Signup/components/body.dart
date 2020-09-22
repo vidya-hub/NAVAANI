@@ -18,6 +18,8 @@ class Body extends StatefulWidget {
 }
 
 class _BodyState extends State<Body> {
+  bool _isProgres = false;
+
   var urlOriginal = "https://whispering-garden-19030.herokuapp.com/users";
 
   var urlRegister =
@@ -107,47 +109,56 @@ class _BodyState extends State<Body> {
                 ),
               ),
             ),
-            RoundedButton(
-              text: "SIGNUP",
-              press: () async {
-                Map<String, String> body = {
-                  "username": _userName.text.trim(),
-                  "password": _passWord.text.trim(),
-                };
-                print((json.encode(body)));
+            _isProgres == true
+                ? Center(child: CircularProgressIndicator())
+                : RoundedButton(
+                    text: "SIGNUP",
+                    press: () async {
+                      setState(() {
+                        _isProgres = true;
+                      });
+                      print(_isProgres);
+                      Map<String, String> body = {
+                        "username": _userName.text.trim(),
+                        "password": _passWord.text.trim(),
+                      };
+                      print((json.encode(body)));
 
-                checkUsername(_userName.text).then((value) {
-                  if (value == "false") {
-                    setState(() {
-                      helpertext = "User Name Is already There";
-                    });
-                  } else if (value == "true") {
-                    regisTer(body)
-                        .then((value) => {
-                              print(value),
-                              if (value != null)
-                                {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) {
-                                        return HomeScreen(
-                                          userId: value,
-                                        );
-                                      },
-                                    ),
-                                  )
-                                }
-                            })
-                        .catchError((onError) {
-                      print(onError);
-                    });
-                  }
-                });
+                      checkUsername(_userName.text).then((value) {
+                        if (value == "false") {
+                          setState(() {
+                            helpertext = "User Name Is already There";
+                          });
+                        } else if (value == "true") {
+                          regisTer(body)
+                              .then((value) => {
+                                    print(value),
+                                    if (value != null)
+                                      {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) {
+                                              return HomeScreen(
+                                                userId: value,
+                                              );
+                                            },
+                                          ),
+                                        )
+                                      }
+                                  })
+                              .catchError((onError) {
+                            print(onError);
+                          });
+                        }
+                      });
 
-                //
-              },
-            ),
+                      setState(() {
+                        _isProgres = false;
+                      });
+                      print(_isProgres);
+                    },
+                  ),
             SizedBox(height: size.height * 0.03),
             AlreadyHaveAnAccountCheck(
               login: false,
@@ -168,8 +179,8 @@ class _BodyState extends State<Body> {
               children: <Widget>[
                 SocalIcon(
                   iconSrc: "icons/facebook.svg",
-                  press: ()async {
-                   await allusers_info();
+                  press: () async {
+                    await allusers_info();
                   },
                 ),
                 SocalIcon(
