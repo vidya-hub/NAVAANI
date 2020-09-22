@@ -12,6 +12,8 @@ import 'package:navaninew/screens/wishlist.dart';
 import 'package:navaninew/search_page.dart';
 // import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 // import 'configuration.dart';
 // import 'configuration.dart';
 
@@ -86,7 +88,8 @@ class _HomeScreenState extends State<HomeScreen> {
           'https://images.pexels.com/photos/2899839/pexels-photo-2899839.jpeg?cs=srgb&dl=pexels-dima-valkov-2899839.jpg&fm=jpg',
     }
   ];
-
+  String productsUrl =
+      "https://whispering-garden-19030.herokuapp.com/products/allproducts";
   List catIconCollection = [
     'icons/dress.png',
     'icons/tshirt.png',
@@ -101,6 +104,11 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     // print(widget.userId);
+  }
+
+  Future getProducts(String url) async {
+    var response = await http.get(url);
+    return response.body;
   }
 
   @override
@@ -186,13 +194,18 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      print("tap");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Shop(),
-                        ),
+                      getProducts(productsUrl).then(
+                        (value) => {
+                          print(value),
+                        },
                       );
+                      // print("tap");
+                      // Navigator.push(
+                      //   context,
+                      //   MaterialPageRoute(
+                      //     builder: (context) => Shop(),
+                      //   ),
+                      // );
                     },
                     child: Container(
                       height: MediaQuery.of(context).size.height * 0.08,
