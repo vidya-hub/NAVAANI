@@ -1,25 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:navaninew/DrawerScreen.dart';
-// import 'package:navaninew/constant/api.dart';
+import 'package:navaninew/market/product.dart';
 import 'package:navaninew/profile_page.dart';
 import 'package:navaninew/components/catlog-items.dart';
 import 'package:navaninew/components/imgslider.dart';
-// import 'package:navaninew/configuration.dart';
-// import 'package:navaninew/navigation_bloc.dart';
 import 'package:navaninew/resources/color.dart';
 import 'package:navaninew/screens/cart.dart';
 import 'package:navaninew/screens/wishlist.dart';
-// import 'package:navaninew/screen2.dart';
 import 'package:navaninew/search_page.dart';
-// import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-// import 'configuration.dart';
-// import 'configuration.dart';
 
 class HomeScreen extends StatefulWidget {
   final userId;
+
   HomeScreen({this.userId});
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -101,6 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'icons/ring.png',
     'icons/earrings.png'
   ];
+  bool isFaviroute = false;
   List menUrls = [];
   List girlUrls = [];
   List kidboyUrls = [];
@@ -131,8 +127,8 @@ class _HomeScreenState extends State<HomeScreen> {
             });
           }
         }
-        print(data);
-        print(menUrls.length);
+        // print(data);
+        // print(menUrls.length);
       },
     );
     // print(widget.userId);
@@ -141,7 +137,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future getProducts(String url) async {
     var response = await http.get(url);
 
-    print(response);
+    // print(response);
     return response;
   }
 
@@ -390,11 +386,33 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: CatalogItemOne(
+                                onTapmethod: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Product(
+                                        id: menUrls[index]["_id"],
+                                        imagurl: menUrls[index]["url"],
+                                        price:
+                                            menUrls[index]["price"].toString(),
+                                        productDescrip: menUrls[index]
+                                            ['Description'],
+                                        productname: menUrls[index]['name'],
+                                        jsonfile: menUrls[index],
+                                      ),
+                                    ),
+                                  );
+                                },
                                 imageURL: menUrls[index]["url"],
                                 isNew: menUrls[index]['type'],
                                 name: menUrls[index]['name'],
                                 price: menUrls[index]['price'].toString(),
                                 desCription: menUrls[index]['Description'],
+                                // onTapLove: () {
+                                //   setState(() {
+                                //     isFaviroute = !isFaviroute;
+                                //   });
+                                // },
                               ),
                             );
                           }),
@@ -445,11 +463,33 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: CatalogItemOne(
+                                onTapmethod: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Product(
+                                          id: girlUrls[index]["_id"],
+                                          imagurl: girlUrls[index]["url"],
+                                          //  imagurl: menUrls[index]["url"],
+                                          price: girlUrls[index]["price"]
+                                              .toString(),
+                                          productDescrip: menUrls[index]
+                                              ['Description'],
+                                          productname: girlUrls[index]['name'],
+                                          jsonfile: girlUrls[index]),
+                                    ),
+                                  );
+                                },
                                 imageURL: girlUrls[index]["url"],
                                 isNew: girlUrls[index]['type'],
                                 name: girlUrls[index]['name'],
                                 price: girlUrls[index]['price'].toString(),
                                 desCription: girlUrls[index]['Description'],
+                                // onTapLove: () {
+                                //   setState(() {
+                                //     isFaviroute = !isFaviroute;
+                                //   });
+                                // },
                               ),
                             );
                           }),
@@ -500,11 +540,33 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: CatalogItemOne(
+                                onTapmethod: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => Product(
+                                        id: kidboyUrls[index]["_id"],
+                                        imagurl: kidboyUrls[index]["url"],
+                                        price: kidboyUrls[index]["price"]
+                                            .toString(),
+                                        productDescrip: kidboyUrls[index]
+                                            ['Description'],
+                                        productname: kidboyUrls[index]['name'],
+                                        jsonfile: kidboyUrls[index],
+                                      ),
+                                    ),
+                                  );
+                                },
                                 imageURL: kidboyUrls[index]["url"],
                                 isNew: kidboyUrls[index]['type'],
                                 name: kidboyUrls[index]['name'],
                                 price: kidboyUrls[index]['price'].toString(),
                                 desCription: kidboyUrls[index]['Description'],
+                                // onTapLove: () {
+                                //   setState(() {
+                                //     isFaviroute = !isFaviroute;
+                                //   });
+                                // },
                               ),
                             );
                           }),

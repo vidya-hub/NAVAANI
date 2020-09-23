@@ -4,7 +4,10 @@ class WishListCard extends StatelessWidget {
   var name = "name";
   final price;
   final imgurl;
-  WishListCard({this.imgurl, this.name, this.price});
+  Function onTapDelete;
+  Function onTapBag;
+  WishListCard(
+      {this.imgurl, this.name, this.price, this.onTapBag, this.onTapDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -70,9 +73,12 @@ class WishListCard extends StatelessWidget {
                         ),
                       ),
                     ),
-                    Container(
-                      margin: EdgeInsets.symmetric(horizontal: 10),
-                      child: Icon(Icons.delete),
+                    GestureDetector(
+                      onTap: onTapDelete,
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 10),
+                        child: Icon(Icons.delete),
+                      ),
                     )
                   ],
                 ),
@@ -84,9 +90,12 @@ class WishListCard extends StatelessWidget {
                 thickness: 1,
                 color: Colors.pink[100],
               ),
-              Text(
-                "ADD TO BAG",
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              GestureDetector(
+                onTap: onTapBag,
+                child: Text(
+                  "ADD TO BAG",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
               )
             ],
           ),

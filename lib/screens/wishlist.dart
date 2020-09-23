@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:navaninew/HomeScreen.dart';
 import 'package:navaninew/components/wishlistcard.dart';
-// import 'package:navaninew/configuration.dart';
+import 'package:navaninew/constant/cartwishlistid.dart';
 
 class WishList extends StatefulWidget {
   @override
@@ -9,38 +9,14 @@ class WishList extends StatefulWidget {
 }
 
 class _WishListState extends State<WishList> {
-  List collectionData = [
-    {
-      'imgURL':
-          'https://i.pinimg.com/736x/c4/b3/4b/c4b34b8639a99ef0787411811b8e82c1.jpg',
-      'isNew': true
-    },
-    {
-      'imgURL':
-          'https://cdn01.buxtonco.com/news/1999/istock-506442302__large.jpg',
-      'isNew': false
-    },
-    {
-      'imgURL':
-          'https://i.pinimg.com/736x/c4/b3/4b/c4b34b8639a99ef0787411811b8e82c1.jpg',
-      'isNew': true
-    },
-    {
-      'imgURL':
-          'https://cdn01.buxtonco.com/news/1999/istock-506442302__large.jpg',
-      'isNew': false
-    },
-    {
-      'imgURL':
-          'https://i.pinimg.com/736x/c4/b3/4b/c4b34b8639a99ef0787411811b8e82c1.jpg',
-      'isNew': true
-    },
-    {
-      'imgURL':
-          'https://cdn01.buxtonco.com/news/1999/istock-506442302__large.jpg',
-      'isNew': false
+  pricecount() {
+    int price = 0;
+    for (var i = 0; i < Cartwishlist.wishlist.length; i++) {
+      price = price + Cartwishlist.wishlist[i]["price"];
     }
-  ];
+    return price;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -105,7 +81,7 @@ class _WishListState extends State<WishList> {
                           Column(
                             children: <Widget>[
                               Text(
-                                "1 Item",
+                                "${Cartwishlist.wishlist.length} Items",
                                 style: TextStyle(
                                   // fontWeight: FontWeight.w300,
                                   fontSize: 20.0,
@@ -114,7 +90,7 @@ class _WishListState extends State<WishList> {
                                 ),
                               ),
                               Text(
-                                "Rs 100/-",
+                                pricecount().toString(),
                                 style: TextStyle(
                                   // fontWeight: FontWeight.w300,
                                   fontSize: 20.0,
@@ -136,12 +112,30 @@ class _WishListState extends State<WishList> {
 
                 Expanded(
                   child: ListView.builder(
-                      itemCount: collectionData.length,
+                      itemCount: Cartwishlist.wishlist.length,
                       itemBuilder: (context, index) {
                         return WishListCard(
-                          name: "Product name",
-                          imgurl: collectionData[index]["imgURL"],
-                          price: "1000/-",
+                          name: Cartwishlist.wishlist[index]["name"],
+                          imgurl: Cartwishlist.wishlist[index]["url"],
+                          price: Cartwishlist.wishlist[index]["price"],
+                          onTapBag: () {
+                            setState(() {
+                              Cartwishlist.cartlist
+                                  .add(Cartwishlist.wishlist[index]);
+                              Cartwishlist.wishlist
+                                  .remove(Cartwishlist.wishlist[index]);
+                              print("wish ${Cartwishlist.wishlist}");
+                              print("cart  ${Cartwishlist.cartlist}");
+                            });
+                          },
+                          onTapDelete: () {
+                            setState(() {
+                              Cartwishlist.wishlist
+                                  .remove(Cartwishlist.wishlist[index]);
+                            });
+
+                            print(Cartwishlist.wishlist);
+                          },
                         );
                       }),
                 ),

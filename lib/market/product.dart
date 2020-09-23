@@ -5,17 +5,48 @@ import 'package:navaninew/market/icon-appbar.dart';
 import 'package:navaninew/market/product-slider.dart';
 import 'package:navaninew/market/button.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:navaninew/constant/cartwishlistid.dart';
+import 'package:navaninew/screens/cart.dart';
 
 class Product extends StatefulWidget {
+  final id;
+  final imagurl;
+  final productname;
+  final productDescrip;
+  final price;
+  final jsonfile;
+
+  Product(
+      {this.id,
+      this.imagurl,
+      this.price,
+      this.productDescrip,
+      this.jsonfile,
+      this.productname});
+
   @override
   _ProductState createState() => _ProductState();
 }
 
 class _ProductState extends State<Product> {
+  @override
+  void initState() {
+    super.initState();
+    if (Cartwishlist.wishlist.contains(widget.jsonfile)) {
+      setState(() {
+        isFaviroute = true;
+      });
+    } else {
+      setState(() {
+        isFaviroute = false;
+      });
+    }
+  }
+
   final sizes = ['XS', 'S', 'M', 'L', 'XL'];
   final colors = ['Red', 'Blue', 'Green', 'Orange', 'White'];
   final productName = 'Blue Shirt';
-  bool isFaviroute = false;
+  bool isFaviroute;
   int sizeIndex = 0, colorIndex = 0;
 
   void onClickShare() {
@@ -28,7 +59,7 @@ class _ProductState extends State<Product> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title,
+          Text(productName,
               style: TextStyle(
                   color: ThemeColor.FILL,
                   fontWeight: FontWeight.w600,
@@ -68,7 +99,30 @@ class _ProductState extends State<Product> {
         child: Padding(
           padding:
               EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0, bottom: 16.0),
-          child: PrimaryButton(text: 'ADD TO CART', onClick: () {}),
+          child: PrimaryButton(
+            text: 'ADD TO CART',
+            onClick: () {
+              // if (!Cartwishlist.cartlist.contains(widget.jsonfile)) {
+              Cartwishlist.cartlist.add(widget.jsonfile);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => CartPage(),
+                ),
+              );
+              // }
+              //  else {
+              //   Navigator.push(
+              //     context,
+              //     MaterialPageRoute(
+              //       builder: (context) => CartPage(),
+              //     ),
+              //
+              // );
+              // }
+              print(Cartwishlist.cartlist);
+            },
+          ),
         ),
       ),
       body: SafeArea(
@@ -80,7 +134,9 @@ class _ProductState extends State<Product> {
               delegate: SliverChildListDelegate([
                 Stack(children: [
                   // prodcuct slider
-                  ProductSlider(),
+                  ProductSlider(
+                    image: widget.imagurl,
+                  ),
                   // like button
                   Positioned(
                     right: 0,
@@ -91,6 +147,14 @@ class _ProductState extends State<Product> {
                           setState(() {
                             isFaviroute = !isFaviroute;
                           });
+                          if (!Cartwishlist.wishlist
+                                  .contains(widget.jsonfile) &&
+                              isFaviroute) {
+                            Cartwishlist.wishlist.add(widget.jsonfile);
+                          } else {
+                            Cartwishlist.wishlist.remove(widget.jsonfile);
+                          }
+                          print(Cartwishlist.wishlist);
                         }),
                   ),
                 ]),
@@ -132,31 +196,27 @@ class _ProductState extends State<Product> {
                     children: [
                       // name
                       Text(
-                        'H&M',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline2
-                            .copyWith(fontSize: 24.0),
+                        widget.productname,
+                        style: Theme.of(context).textTheme.headline4.copyWith(
+                            fontSize: 12.0, fontWeight: FontWeight.w900),
                       ),
                       // price
                       Text(
-                        '\$' + '19.22',
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline2
-                            .copyWith(fontSize: 24.0),
+                        '\$' + '${widget.price}',
+                        style: Theme.of(context).textTheme.headline3.copyWith(
+                            fontSize: 10.0, fontWeight: FontWeight.w900),
                       )
                     ],
                   ),
 
                   // sub heading
-                  Text(
-                    'Short blue dress',
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText2
-                        .copyWith(color: ThemeColor.FILL),
-                  ),
+                  // Text(
+                  //   'Short blue dress',
+                  //   style: Theme.of(context)
+                  //       .textTheme
+                  //       .bodyText2
+                  //       .copyWith(color: ThemeColor.FILL),
+                  // ),
 
                   // star rating
                   SizedBox(
@@ -178,9 +238,7 @@ class _ProductState extends State<Product> {
                   // star rating
                   SizedBox(height: 16.0),
                   Text(
-                    'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna' +
-                        'aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ' +
-                        'Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
+                    widget.productDescrip,
                     style: Theme.of(context)
                         .textTheme
                         .bodyText1
@@ -289,48 +347,48 @@ class _ProductState extends State<Product> {
 
   // open review panel
   void setSizeFilter(index) {
-      setState(() {
-        sizeIndex = index;
-      });
-      Navigator.pop(context);
-    }
+    setState(() {
+      sizeIndex = index;
+    });
+    Navigator.pop(context);
+  }
 
-    void _openSize(context) {
-      List<Widget> items = List();
-      for (int i = 0; i < sizes.length; i++) {
-        items.add(SimpleRectButton(
-          onClick: () => setSizeFilter(i),
-          text: sizes[i],
-          isActive: (sizeIndex == i),
-        ));
-      }
-      showModalBottomSheet(
-          context: context,
-          backgroundColor: Colors.transparent,
-          builder: (BuildContext bc) {
-            return Container(
-              decoration: new BoxDecoration(
-                  color: ThemeColor.SECONDARY,
-                  borderRadius: new BorderRadius.only(
-                    topLeft: const Radius.circular(26.0),
-                    topRight: const Radius.circular(26.0),
-                  )),
-              padding: EdgeInsetsDirectional.only(
-                  top: 36, start: 15.0, end: 15.0, bottom: 30.0),
-              child: new Column(
-                children: <Widget>[
-                  Center(
-                    child: Text('Select Size',
-                        style: Theme.of(context).textTheme.headline3),
-                  ),
-                  SizedBox(height: 22.0, width: double.infinity),
-                  Wrap(
-                    spacing: 25.0,
-                    children: items,
-                  )
-                ],
-              ),
-            );
-          });
+  void _openSize(context) {
+    List<Widget> items = List();
+    for (int i = 0; i < sizes.length; i++) {
+      items.add(SimpleRectButton(
+        onClick: () => setSizeFilter(i),
+        text: sizes[i],
+        isActive: (sizeIndex == i),
+      ));
     }
+    showModalBottomSheet(
+        context: context,
+        backgroundColor: Colors.transparent,
+        builder: (BuildContext bc) {
+          return Container(
+            decoration: new BoxDecoration(
+                color: ThemeColor.SECONDARY,
+                borderRadius: new BorderRadius.only(
+                  topLeft: const Radius.circular(26.0),
+                  topRight: const Radius.circular(26.0),
+                )),
+            padding: EdgeInsetsDirectional.only(
+                top: 36, start: 15.0, end: 15.0, bottom: 30.0),
+            child: new Column(
+              children: <Widget>[
+                Center(
+                  child: Text('Select Size',
+                      style: Theme.of(context).textTheme.headline3),
+                ),
+                SizedBox(height: 22.0, width: double.infinity),
+                Wrap(
+                  spacing: 25.0,
+                  children: items,
+                )
+              ],
+            ),
+          );
+        });
+  }
 }

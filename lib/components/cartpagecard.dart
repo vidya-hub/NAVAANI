@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CartPageCard extends StatelessWidget {
-  var name = "name";
+  var name;
   final price;
   final imgurl;
   CartPageCard({this.imgurl, this.name, this.price});
@@ -15,6 +15,8 @@ class CartPageCard extends StatelessWidget {
         shadowColor: Colors.blueAccent[100],
         elevation: 10,
         child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height * 0.25,
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -39,15 +41,6 @@ class CartPageCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 1),
                     child: Container(
-                      // color: Colors.black,
-                      // decoration: BoxDecoration(
-                      //   // color: Colors.cyan,
-                      //   borderRadius: BorderRadius.circular(20),
-
-                      //   border: Border.all(
-                      //     color: Colors.pink[100],
-                      //   ),
-                      // ),
                       height: MediaQuery.of(context).size.height * 0.18,
                       width: MediaQuery.of(context).size.width * 0.3,
                       child: Column(
