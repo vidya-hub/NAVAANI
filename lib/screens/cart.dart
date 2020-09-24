@@ -9,6 +9,8 @@ class CartPage extends StatefulWidget {
 }
 
 class _CartPageState extends State<CartPage> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   pricecount() {
     int price = 0;
     for (var i = 0; i < Cartwishlist.cartlist.length; i++) {
@@ -17,9 +19,16 @@ class _CartPageState extends State<CartPage> {
     return price;
   }
 
+  void _showScaffold(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.white,
       body: Container(
         // color: Theme.of(context).backgroundColor,
@@ -114,11 +123,27 @@ class _CartPageState extends State<CartPage> {
                   child: ListView.builder(
                       itemCount: Cartwishlist.cartlist.length,
                       itemBuilder: (context, index) {
-                        return CartPageCard(
-                          name: Cartwishlist.cartlist[index]["name"],
-                          imgurl: Cartwishlist.cartlist[index]["url"],
-                          price:
-                              Cartwishlist.cartlist[index]["price"].toString(),
+                        return Dismissible(
+                          key: Key('item ${Cartwishlist.cartlist[index]}'),
+                          onDismissed: (DismissDirection direction) {
+                            if (direction == DismissDirection.startToEnd) {
+                              print("Add to favorite");
+                            } else {
+                              print('Remove item');
+                            }
+                            setState(() {
+                              Cartwishlist.wishlist
+                                  .remove(Cartwishlist.wishlist[index]);
+
+                              _showScaffold("Item Removed from Cart");
+                            });
+                          },
+                          child: CartPageCard(
+                            name: Cartwishlist.cartlist[index]["name"],
+                            imgurl: Cartwishlist.cartlist[index]["url"],
+                            price: Cartwishlist.cartlist[index]["price"]
+                                .toString(),
+                          ),
                         );
                       }),
                 ),

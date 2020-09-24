@@ -9,6 +9,7 @@ class WishList extends StatefulWidget {
 }
 
 class _WishListState extends State<WishList> {
+  GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   pricecount() {
     int price = 0;
     for (var i = 0; i < Cartwishlist.wishlist.length; i++) {
@@ -17,9 +18,16 @@ class _WishListState extends State<WishList> {
     return price;
   }
 
+  void _showScaffold(String message) {
+    _scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       body: Container(
         height: MediaQuery.of(context).size.height,
         width: MediaQuery.of(context).size.width,
@@ -114,28 +122,44 @@ class _WishListState extends State<WishList> {
                   child: ListView.builder(
                       itemCount: Cartwishlist.wishlist.length,
                       itemBuilder: (context, index) {
-                        return WishListCard(
-                          name: Cartwishlist.wishlist[index]["name"],
-                          imgurl: Cartwishlist.wishlist[index]["url"],
-                          price: Cartwishlist.wishlist[index]["price"],
-                          onTapBag: () {
-                            setState(() {
-                              Cartwishlist.cartlist
-                                  .add(Cartwishlist.wishlist[index]);
-                              Cartwishlist.wishlist
-                                  .remove(Cartwishlist.wishlist[index]);
-                              print("wish ${Cartwishlist.wishlist}");
-                              print("cart  ${Cartwishlist.cartlist}");
-                            });
-                          },
-                          onTapDelete: () {
+                        return Dismissible(
+                          key: Key('item ${Cartwishlist.wishlist[index]}'),
+                          onDismissed: (DismissDirection direction) {
+                            if (direction == DismissDirection.startToEnd) {
+                              print("Add to favorite");
+                            } else {
+                              print('Remove item');
+                            }
                             setState(() {
                               Cartwishlist.wishlist
                                   .remove(Cartwishlist.wishlist[index]);
-                            });
 
-                            print(Cartwishlist.wishlist);
+                              _showScaffold("Item Removed from Wishlist");
+                            });
                           },
+                          child: WishListCard(
+                            name: Cartwishlist.wishlist[index]["name"],
+                            imgurl: Cartwishlist.wishlist[index]["url"],
+                            price: Cartwishlist.wishlist[index]["price"],
+                            onTapBag: () {
+                              setState(() {
+                                Cartwishlist.cartlist
+                                    .add(Cartwishlist.wishlist[index]);
+                                Cartwishlist.wishlist
+                                    .remove(Cartwishlist.wishlist[index]);
+                                print("wish ${Cartwishlist.wishlist}");
+                                print("cart  ${Cartwishlist.cartlist}");
+                              });
+                            },
+                            onTapDelete: () {
+                              setState(() {
+                                Cartwishlist.wishlist
+                                    .remove(Cartwishlist.wishlist[index]);
+                              });
+
+                              print(Cartwishlist.wishlist);
+                            },
+                          ),
                         );
                       }),
                 ),
