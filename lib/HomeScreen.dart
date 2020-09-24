@@ -101,6 +101,428 @@ class _HomeScreenState extends State<HomeScreen> {
   List girlUrls = [];
   List kidboyUrls = [];
   List kidGirlUrls = [];
+
+  getRefresh() {
+    return null;
+  }
+
+  Container getHomeScreenList() {
+    return Container(
+      child: Column(
+        children: [
+          Column(
+            children: <Widget>[
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              Container(
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height * 0.1,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: <Widget>[
+                        IconButton(
+                            icon: Icon(Icons.menu),
+                            onPressed: () {
+                              _scaffoldKey.currentState.openDrawer();
+                            }),
+                        Container(
+                          child: Image.asset(
+                            "images/title-bg.png",
+                            scale: 4,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: <Widget>[
+                        IconButton(
+                            icon: Icon(Icons.person),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyHomePage(),
+                                ),
+                              );
+                            }),
+                        IconButton(
+                            icon: Icon(Icons.shopping_basket),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => CartPage(),
+                                ),
+                              );
+                            }),
+                        IconButton(
+                            icon: Icon(Icons.card_giftcard),
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => WishList(),
+                                ),
+                              );
+                            }),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.02,
+              ),
+              GestureDetector(
+                onTap: () {
+                  print("tap");
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => Shop(),
+                    ),
+                  );
+                },
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.08,
+                  width: MediaQuery.of(context).size.width * 0.9,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black12,
+                        blurRadius: 5,
+                        offset: Offset(1, 3),
+                      ),
+                    ],
+
+                    // border: Border.all(color: Colors.black38),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          children: <Widget>[
+                            Icon(Icons.search, size: 20, color: Colors.black54),
+                            Text(
+                              'Search Here',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: EdgeInsets.all(7.0),
+                        decoration: BoxDecoration(
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black38,
+                                blurRadius: 2,
+                                offset: Offset.zero)
+                          ],
+                          color: Colors.black45,
+
+                          // border: Border.all(color: Colors.black38),
+                          borderRadius: BorderRadius.circular(35.0),
+                        ),
+                        // color: Colors.blue,
+                        child: Icon(
+                          Icons.business_center,
+                          size: 28,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 0.01,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Container(
+                  height: MediaQuery.of(context).size.height * 0.1,
+
+                  // color: Colors.transparent,
+                  width: MediaQuery.of(context).size.width,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) {
+                      return Card(
+                        elevation: 5.0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100.0),
+                        ),
+                        child: CircleAvatar(
+                          backgroundColor: Colors.white,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.asset(
+                              catIconCollection[index],
+                            ),
+                          ),
+                          radius: 35.0,
+                        ),
+                      );
+                    },
+                    itemCount: 8,
+                  ),
+                ),
+              ),
+            ],
+          ),
+          SingleChildScrollView(
+            child: CarouselSlider(
+              options: CarouselOptions(
+                autoPlay: true,
+                aspectRatio: 2.0,
+                enlargeCenterPage: true,
+              ),
+              items: imageSliders,
+            ),
+          ),
+          SizedBox(
+            height: 30,
+          ),
+          SizedBox(
+            height: 1.0,
+          ),
+          SizedBox(height: 10.0),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  Text('New Mens Collection',
+                      style: Theme.of(context).textTheme.headline6),
+                  SizedBox(height: 4.0),
+                  // Spacer(),
+                  Text('Celebration Collection',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText2
+                          .apply(color: ThemeColor.FILL)),
+                ]),
+                // Spacer(),
+                GestureDetector(
+                    child: Text('View All',
+                        style: TextStyle(
+                            fontSize: 15.0, fontWeight: FontWeight.bold)),
+                    onTap: () {})
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 5.0,
+          ),
+          Container(
+            child: SizedBox(
+              height: 400.0,
+              child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: menUrls.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CatalogItemOne(
+                        onTapmethod: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Product(
+                                id: menUrls[index]["_id"],
+                                imagurl: menUrls[index]["url"],
+                                price: menUrls[index]["price"].toString(),
+                                productDescrip: menUrls[index]['Description'],
+                                productname: menUrls[index]['name'],
+                                jsonfile: menUrls[index],
+                              ),
+                            ),
+                          );
+                        },
+                        imageURL: menUrls[index]["url"],
+                        isNew: menUrls[index]['type'],
+                        name: menUrls[index]['name'],
+                        price: menUrls[index]['price'].toString(),
+                        desCription: menUrls[index]['Description'],
+                        // onTapLove: () {
+                        //   setState(() {
+                        //     isFaviroute = !isFaviroute;
+                        //   });
+                        // },
+                      ),
+                    );
+                  }),
+            ),
+          ),
+          SizedBox(height: 5.0),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('New Girls Collection',
+                        style: Theme.of(context).textTheme.headline6),
+                    SizedBox(height: 4.0),
+                    // Spacer(),
+                    Text('Olg gauge Collection',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2
+                            .apply(color: ThemeColor.FILL)),
+                  ],
+                ),
+                // Spacer(),
+                GestureDetector(
+                    child: Text('View All',
+                        style: TextStyle(
+                            fontSize: 15.0, fontWeight: FontWeight.bold)),
+                    onTap: () {})
+              ],
+            ),
+          ),
+          SizedBox(height: 5),
+          Container(
+            // padding: EdgeInsets.only(
+            //     left: MediaQuery.of(context).size.width * 0.09),
+            child: SizedBox(
+              height: 400.0,
+              child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: girlUrls.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CatalogItemOne(
+                        onTapmethod: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Product(
+                                  id: girlUrls[index]["_id"],
+                                  imagurl: girlUrls[index]["url"],
+                                  //  imagurl: menUrls[index]["url"],
+                                  price: girlUrls[index]["price"].toString(),
+                                  productDescrip: menUrls[index]['Description'],
+                                  productname: girlUrls[index]['name'],
+                                  jsonfile: girlUrls[index]),
+                            ),
+                          );
+                        },
+                        imageURL: girlUrls[index]["url"],
+                        isNew: girlUrls[index]['type'],
+                        name: girlUrls[index]['name'],
+                        price: girlUrls[index]['price'].toString(),
+                        desCription: girlUrls[index]['Description'],
+                        // onTapLove: () {
+                        //   setState(() {
+                        //     isFaviroute = !isFaviroute;
+                        //   });
+                        // },
+                      ),
+                    );
+                  }),
+            ),
+          ),
+          SizedBox(height: 5.0),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text('New Kids Collection',
+                        style: Theme.of(context).textTheme.headline6),
+                    SizedBox(height: 4.0),
+                    // Spacer(),
+                    Text('Olg gauge Collection',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyText2
+                            .apply(color: ThemeColor.FILL)),
+                  ],
+                ),
+                // Spacer(),
+                GestureDetector(
+                    child: Text('View All',
+                        style: TextStyle(
+                            fontSize: 15.0, fontWeight: FontWeight.bold)),
+                    onTap: () {})
+              ],
+            ),
+          ),
+          SizedBox(height: 5),
+          Container(
+            // padding: EdgeInsets.only(
+            //     left: MediaQuery.of(context).size.width * 0.09),
+            child: SizedBox(
+              height: 400.0,
+              child: ListView.builder(
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.horizontal,
+                  itemCount: kidboyUrls.length,
+                  itemBuilder: (BuildContext ctxt, int index) {
+                    return Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: CatalogItemOne(
+                        onTapmethod: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => Product(
+                                id: kidboyUrls[index]["_id"],
+                                imagurl: kidboyUrls[index]["url"],
+                                price: kidboyUrls[index]["price"].toString(),
+                                productDescrip: kidboyUrls[index]
+                                    ['Description'],
+                                productname: kidboyUrls[index]['name'],
+                                jsonfile: kidboyUrls[index],
+                              ),
+                            ),
+                          );
+                        },
+                        imageURL: kidboyUrls[index]["url"],
+                        isNew: kidboyUrls[index]['type'],
+                        name: kidboyUrls[index]['name'],
+                        price: kidboyUrls[index]['price'].toString(),
+                        desCription: kidboyUrls[index]['Description'],
+                        // onTapLove: () {
+                        //   setState(() {
+                        //     isFaviroute = !isFaviroute;
+                        //   });
+                        // },
+                      ),
+                    );
+                  }),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -148,486 +570,16 @@ class _HomeScreenState extends State<HomeScreen> {
       drawer: Drawer(
         child: DrawerScreen(),
       ),
-      body: SafeArea(
-        child: Container(
-          color: Colors.white,
+      body: RefreshIndicator(
+        onRefresh: () => getRefresh(),
+        child: SafeArea(
           child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            child: SingleChildScrollView(
-              child: Column(
-                children: <Widget>[
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  Container(
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height * 0.1,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: <Widget>[
-                            IconButton(
-                                icon: Icon(Icons.menu),
-                                onPressed: () {
-                                  _scaffoldKey.currentState.openDrawer();
-                                }),
-                            Container(
-                              child: Image.asset(
-                                "images/title-bg.png",
-                                scale: 4,
-                              ),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: <Widget>[
-                            IconButton(
-                                icon: Icon(Icons.person),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => MyHomePage(),
-                                    ),
-                                  );
-                                }),
-                            IconButton(
-                                icon: Icon(Icons.shopping_basket),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => CartPage(),
-                                    ),
-                                  );
-                                }),
-                            IconButton(
-                                icon: Icon(Icons.card_giftcard),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => WishList(),
-                                    ),
-                                  );
-                                }),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.02,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      print("tap");
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Shop(),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.08,
-                      width: MediaQuery.of(context).size.width * 0.9,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black12,
-                            blurRadius: 5,
-                            offset: Offset(1, 3),
-                          ),
-                        ],
-
-                        // border: Border.all(color: Colors.black38),
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Row(
-                              children: <Widget>[
-                                Icon(Icons.search,
-                                    size: 20, color: Colors.black54),
-                                Text(
-                                  'Search Here',
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 15,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.all(7.0),
-                            decoration: BoxDecoration(
-                              boxShadow: [
-                                BoxShadow(
-                                    color: Colors.black38,
-                                    blurRadius: 2,
-                                    offset: Offset.zero)
-                              ],
-                              color: Colors.black45,
-
-                              // border: Border.all(color: Colors.black38),
-                              borderRadius: BorderRadius.circular(35.0),
-                            ),
-                            // color: Colors.blue,
-                            child: Icon(
-                              Icons.business_center,
-                              size: 28,
-                              color: Colors.white,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.01,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.1,
-
-                      // color: Colors.transparent,
-                      width: MediaQuery.of(context).size.width,
-                      child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return Card(
-                            elevation: 5.0,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(100.0),
-                            ),
-                            child: CircleAvatar(
-                              backgroundColor: Colors.white,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.asset(
-                                  catIconCollection[index],
-                                ),
-                              ),
-                              radius: 35.0,
-                            ),
-                          );
-                        },
-                        itemCount: 8,
-                      ),
-                    ),
-                  ),
-                  SingleChildScrollView(
-                    child: CarouselSlider(
-                      options: CarouselOptions(
-                        autoPlay: true,
-                        aspectRatio: 2.0,
-                        enlargeCenterPage: true,
-                      ),
-                      items: imageSliders,
-                    ),
-                  ),
-                  SizedBox(
-                    height: 30,
-                  ),
-                  SizedBox(
-                    height: 1.0,
-                  ),
-                  SizedBox(height: 10.0),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('New Mens Collection',
-                                  style: Theme.of(context).textTheme.headline6),
-                              SizedBox(height: 4.0),
-                              // Spacer(),
-                              Text('Celebration Collection',
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .bodyText2
-                                      .apply(color: ThemeColor.FILL)),
-                            ]),
-                        // Spacer(),
-                        GestureDetector(
-                            child: Text('View All',
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold)),
-                            onTap: () {})
-                      ],
-                    ),
-                  ),
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  Container(
-                    child: SizedBox(
-                      height: 400.0,
-                      child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: menUrls.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CatalogItemOne(
-                                onTapmethod: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Product(
-                                        id: menUrls[index]["_id"],
-                                        imagurl: menUrls[index]["url"],
-                                        price:
-                                            menUrls[index]["price"].toString(),
-                                        productDescrip: menUrls[index]
-                                            ['Description'],
-                                        productname: menUrls[index]['name'],
-                                        jsonfile: menUrls[index],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                imageURL: menUrls[index]["url"],
-                                isNew: menUrls[index]['type'],
-                                name: menUrls[index]['name'],
-                                price: menUrls[index]['price'].toString(),
-                                desCription: menUrls[index]['Description'],
-                                // onTapLove: () {
-                                //   setState(() {
-                                //     isFaviroute = !isFaviroute;
-                                //   });
-                                // },
-                              ),
-                            );
-                          }),
-                    ),
-                  ),
-                  SizedBox(height: 5.0),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('New Girls Collection',
-                                style: Theme.of(context).textTheme.headline6),
-                            SizedBox(height: 4.0),
-                            // Spacer(),
-                            Text('Olg gauge Collection',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .apply(color: ThemeColor.FILL)),
-                          ],
-                        ),
-                        // Spacer(),
-                        GestureDetector(
-                            child: Text('View All',
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold)),
-                            onTap: () {})
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Container(
-                    // padding: EdgeInsets.only(
-                    //     left: MediaQuery.of(context).size.width * 0.09),
-                    child: SizedBox(
-                      height: 400.0,
-                      child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: girlUrls.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CatalogItemOne(
-                                onTapmethod: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Product(
-                                          id: girlUrls[index]["_id"],
-                                          imagurl: girlUrls[index]["url"],
-                                          //  imagurl: menUrls[index]["url"],
-                                          price: girlUrls[index]["price"]
-                                              .toString(),
-                                          productDescrip: menUrls[index]
-                                              ['Description'],
-                                          productname: girlUrls[index]['name'],
-                                          jsonfile: girlUrls[index]),
-                                    ),
-                                  );
-                                },
-                                imageURL: girlUrls[index]["url"],
-                                isNew: girlUrls[index]['type'],
-                                name: girlUrls[index]['name'],
-                                price: girlUrls[index]['price'].toString(),
-                                desCription: girlUrls[index]['Description'],
-                                // onTapLove: () {
-                                //   setState(() {
-                                //     isFaviroute = !isFaviroute;
-                                //   });
-                                // },
-                              ),
-                            );
-                          }),
-                    ),
-                  ),
-                  SizedBox(height: 5.0),
-                  Container(
-                    margin: EdgeInsets.symmetric(horizontal: 10),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text('New Kids Collection',
-                                style: Theme.of(context).textTheme.headline6),
-                            SizedBox(height: 4.0),
-                            // Spacer(),
-                            Text('Olg gauge Collection',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText2
-                                    .apply(color: ThemeColor.FILL)),
-                          ],
-                        ),
-                        // Spacer(),
-                        GestureDetector(
-                            child: Text('View All',
-                                style: TextStyle(
-                                    fontSize: 15.0,
-                                    fontWeight: FontWeight.bold)),
-                            onTap: () {})
-                      ],
-                    ),
-                  ),
-                  SizedBox(height: 5),
-                  Container(
-                    // padding: EdgeInsets.only(
-                    //     left: MediaQuery.of(context).size.width * 0.09),
-                    child: SizedBox(
-                      height: 400.0,
-                      child: ListView.builder(
-                          physics: BouncingScrollPhysics(),
-                          scrollDirection: Axis.horizontal,
-                          itemCount: kidboyUrls.length,
-                          itemBuilder: (BuildContext ctxt, int index) {
-                            return Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: CatalogItemOne(
-                                onTapmethod: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => Product(
-                                        id: kidboyUrls[index]["_id"],
-                                        imagurl: kidboyUrls[index]["url"],
-                                        price: kidboyUrls[index]["price"]
-                                            .toString(),
-                                        productDescrip: kidboyUrls[index]
-                                            ['Description'],
-                                        productname: kidboyUrls[index]['name'],
-                                        jsonfile: kidboyUrls[index],
-                                      ),
-                                    ),
-                                  );
-                                },
-                                imageURL: kidboyUrls[index]["url"],
-                                isNew: kidboyUrls[index]['type'],
-                                name: kidboyUrls[index]['name'],
-                                price: kidboyUrls[index]['price'].toString(),
-                                desCription: kidboyUrls[index]['Description'],
-                                // onTapLove: () {
-                                //   setState(() {
-                                //     isFaviroute = !isFaviroute;
-                                //   });
-                                // },
-                              ),
-                            );
-                          }),
-                    ),
-                  ),
-                  // SizedBox(height: 5.0),
-                  // Container(
-                  //   margin: EdgeInsets.symmetric(horizontal: 10),
-                  //   child: Row(
-                  //     crossAxisAlignment: CrossAxisAlignment.center,
-                  //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  //     children: [
-                  //       Column(
-                  //         crossAxisAlignment: CrossAxisAlignment.start,
-                  //         children: [
-                  //           Text('New Kids Collection',
-                  //               style: Theme.of(context).textTheme.headline6),
-                  //           SizedBox(height: 4.0),
-                  //           // Spacer(),
-                  //           Text('Olg gauge Collection',
-                  //               style: Theme.of(context)
-                  //                   .textTheme
-                  //                   .bodyText2
-                  //                   .apply(color: ThemeColor.FILL)),
-                  //         ],
-                  //       ),
-                  //       // Spacer(),
-                  //       GestureDetector(
-                  //           child: Text('View All',
-                  //               style: TextStyle(
-                  //                   fontSize: 15.0,
-                  //                   fontWeight: FontWeight.bold)),
-                  //           onTap: () {})
-                  //     ],
-                  //   ),
-                  // ),
-                  // SizedBox(height: 5),
-                  // Container(
-                  //   // padding: EdgeInsets.only(
-                  //   //     left: MediaQuery.of(context).size.width * 0.09),
-                  //   child: SizedBox(
-                  //     height: 400.0,
-                  //     child: ListView.builder(
-                  //         physics: BouncingScrollPhysics(),
-                  //         scrollDirection: Axis.horizontal,
-                  //         itemCount: kidGirlUrls.length,
-                  //         itemBuilder: (BuildContext ctxt, int index) {
-                  //           return Padding(
-                  //             padding: const EdgeInsets.all(8.0),
-                  //             child: CatalogItemOne(
-                  //               imageURL: kidGirlUrls[index]["url"],
-                  //               isNew: kidGirlUrls[index]['type'],
-                  //               name: kidGirlUrls[index]['name'],
-                  //               price: kidGirlUrls[index]['price'].toString(),
-                  //               desCription: kidGirlUrls[index]['Description'],
-                  //             ),
-                  //           );
-                  //         }),
-                  //   ),
-                  // ),
-                ],
+            color: Colors.white,
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+              width: MediaQuery.of(context).size.width,
+              child: SingleChildScrollView(
+                child: getHomeScreenList(),
               ),
             ),
           ),

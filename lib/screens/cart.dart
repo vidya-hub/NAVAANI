@@ -50,7 +50,7 @@ class _CartPageState extends State<CartPage> {
                 height: MediaQuery.of(context).size.height * 0.02,
               ),
               Container(
-                height: MediaQuery.of(context).size.height * 0.14,
+                height: MediaQuery.of(context).size.height * 0.16,
                 child: Column(
                   children: [
                     // SizedBox(
