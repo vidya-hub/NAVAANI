@@ -12,6 +12,7 @@ import 'package:navaninew/welcomepage/components/already_have_an_account_acheck.
 import 'package:navaninew/welcomepage/components/rounded_button.dart';
 import 'package:navaninew/welcomepage/components/text_field_container.dart';
 import 'package:navaninew/welcomepage/constants.dart';
+import 'package:navaninew/constant/cartwishlistid.dart';
 
 class Body extends StatefulWidget {
   @override
@@ -158,6 +159,10 @@ class _BodyState extends State<Body> {
                           _userName.text.trim(), _passWord.text.trim());
                       if (loginbody != "[]") {
                         print(json.decode(loginbody)[0]['_id']);
+                        setState(() {
+                          Cartwishlist.userid =
+                              json.decode(loginbody)[0]['_id'];
+                        });
                         Navigator.push(
                           context,
                           MaterialPageRoute(

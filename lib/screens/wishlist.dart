@@ -25,6 +25,13 @@ class _WishListState extends State<WishList> {
   }
 
   @override
+  void initState() {
+    super.initState();
+
+    print(Cartwishlist.userid);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
@@ -118,51 +125,67 @@ class _WishListState extends State<WishList> {
                 // ),
                 // for (var i = 0; i < collectionData.length; i++)
 
-                Expanded(
-                  child: ListView.builder(
-                      itemCount: Cartwishlist.wishlist.length,
-                      itemBuilder: (context, index) {
-                        return Dismissible(
-                          key: Key('item ${Cartwishlist.wishlist[index]}'),
-                          onDismissed: (DismissDirection direction) {
-                            if (direction == DismissDirection.startToEnd) {
-                              print("Add to favorite");
-                            } else {
-                              print('Remove item');
-                            }
-                            setState(() {
-                              Cartwishlist.wishlist
-                                  .remove(Cartwishlist.wishlist[index]);
+                Cartwishlist.wishlist.length != 0
+                    ? Expanded(
+                        child: ListView.builder(
+                            itemCount: Cartwishlist.wishlist.length,
+                            itemBuilder: (context, index) {
+                              return Dismissible(
+                                key:
+                                    Key('item ${Cartwishlist.wishlist[index]}'),
+                                onDismissed: (DismissDirection direction) {
+                                  if (direction ==
+                                      DismissDirection.startToEnd) {
+                                    print("Add to favorite");
+                                  } else {
+                                    print('Remove item');
+                                  }
+                                  setState(() {
+                                    Cartwishlist.wishlist
+                                        .remove(Cartwishlist.wishlist[index]);
 
-                              _showScaffold("Item Removed from Wishlist");
-                            });
-                          },
-                          child: WishListCard(
-                            name: Cartwishlist.wishlist[index]["name"],
-                            imgurl: Cartwishlist.wishlist[index]["url"],
-                            price: Cartwishlist.wishlist[index]["price"],
-                            onTapBag: () {
-                              setState(() {
-                                Cartwishlist.cartlist
-                                    .add(Cartwishlist.wishlist[index]);
-                                Cartwishlist.wishlist
-                                    .remove(Cartwishlist.wishlist[index]);
-                                print("wish ${Cartwishlist.wishlist}");
-                                print("cart  ${Cartwishlist.cartlist}");
-                              });
-                            },
-                            onTapDelete: () {
-                              setState(() {
-                                Cartwishlist.wishlist
-                                    .remove(Cartwishlist.wishlist[index]);
-                              });
+                                    _showScaffold("Item Removed from Wishlist");
+                                  });
+                                },
+                                child: WishListCard(
+                                  name: Cartwishlist.wishlist[index]["name"],
+                                  imgurl: Cartwishlist.wishlist[index]["url"],
+                                  price: Cartwishlist.wishlist[index]["price"],
+                                  onTapBag: () {
+                                    setState(() {
+                                      Cartwishlist.cartlist
+                                          .add(Cartwishlist.wishlist[index]);
+                                      Cartwishlist.wishlist
+                                          .remove(Cartwishlist.wishlist[index]);
+                                      print("wish ${Cartwishlist.wishlist}");
+                                      print("cart  ${Cartwishlist.cartlist}");
+                                    });
+                                  },
+                                  onTapDelete: () {
+                                    setState(() {
+                                      Cartwishlist.wishlist
+                                          .remove(Cartwishlist.wishlist[index]);
+                                    });
 
-                              print(Cartwishlist.wishlist);
-                            },
+                                    print(Cartwishlist.wishlist);
+                                  },
+                                ),
+                              );
+                            }),
+                      )
+                    : Container(
+                        height: MediaQuery.of(context).size.height * 0.6,
+                        child: Center(
+                          child: Text(
+                            "WishList is Empty",
+                            style: TextStyle(
+                                // fontWeight: FontWeight.w300,
+                                fontSize: 40.0,
+                                color: Colors.black,
+                                fontWeight: FontWeight.bold),
                           ),
-                        );
-                      }),
-                ),
+                        ),
+                      ),
               ],
             ),
           ),
