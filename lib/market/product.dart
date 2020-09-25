@@ -10,6 +10,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:navaninew/constant/cartwishlistid.dart';
 import 'package:navaninew/screens/cart.dart';
 import 'package:http/http.dart' as http;
+import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 class Product extends StatefulWidget {
   final id;
@@ -34,9 +35,15 @@ class Product extends StatefulWidget {
 class _ProductState extends State<Product> {
   bool isFaviroute = false;
   var existedwishitemids = [];
+  bool _isprogress = true;
   @override
   initState() {
     super.initState();
+    Future.delayed(Duration(seconds: 3), () {
+      setState(() {
+        _isprogress = false;
+      });
+    });
     getWishdata().then((value) {
       if (value == "[]") {
         print("nothing");
@@ -233,273 +240,280 @@ class _ProductState extends State<Product> {
           ),
         ),
       ),
-      body: SafeArea(
-        child: Container(
-            child: CustomScrollView(
-          physics: BouncingScrollPhysics(),
-          slivers: <Widget>[
-            SliverList(
-              delegate: SliverChildListDelegate([
-                Stack(children: [
-                  // prodcuct slider
-                  ProductSlider(
-                    image: widget.imagurl,
-                  ),
-                  // like button
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: LikeButtonSimple(
-                        isActive: isFaviroute,
-                        onClick: () {
-                          // wishlistnew(body)
-                          setState(() {
-                            isFaviroute = !isFaviroute;
-                          });
-                          wishlistexists().then((notexist) {
-                            if (notexist == "true") {
-                              Map<String, List> body = {
-                                "products": [widget.jsonfile],
-                              };
-                              wishlistnew(body).then((value) {
-                                print(value);
-                              });
-                            } else if (notexist == "false") {
-                              if (existedwishitemids
-                                  .contains(widget.jsonfile["_id"])) {
-                                getWishdata().then((value) {
-                                  List existedlist =
-                                      json.decode(value)[0]["listofProductids"];
-                                  for (var item in existedlist) {
-                                    if (item["_id"] == widget.id) {
-                                      existedlist.remove(item);
-                                      setState(() {
-                                        isFaviroute = false;
-                                      });
-                                      Map<String, List> body = {
-                                        "products": existedlist,
-                                      };
-                                      wishlistupdate(body).then((value) {
-                                        print(value);
-                                      });
-                                    } else {}
-                                  }
-                                });
-                              } else {
-                                getWishdata().then((value) {
-                                  List existedlist =
-                                      json.decode(value)[0]["listofProductids"];
-                                  existedlist.add(widget.jsonfile);
-
-                                  Map<String, List> body = {
-                                    "products": existedlist,
-                                  };
-                                  wishlistupdate(body).then((value) {
-                                    print(value);
-                                  });
-                                });
-                              }
-                              // print(existedwishitemids);
-                              // print(existedwishitemids
-                              //     .contains(widget.jsonfile["_id"]));
-                              // getWishdata().then((value) {
-                              //   // List existedlist =
-                              //   //     json.decode(value)[0]["listofProductids"];
-
-                              //   // print(widget.jsonfile);
-                              // });
-                              // getlistofproductid(existedwishitemids);
-                              // print(existedwishitemids);
-                            }
-                          });
-
-                          //
-                          //
-                          // }
-                          // if (!Cartwishlist.wishlist
-                          //     .contains(widget.jsonfile)) {
-                          //   Cartwishlist.wishlist.add(widget.jsonfile);
-                          //   Map<String, List> body = {
-                          //     "products": Cartwishlist.wishlist,
-                          //   };
-                          //   wishlistexists().then((notexist) {
-                          //     if (notexist == "true") {
-                          //       wishlistnew(body).then((value) {
-                          //         print(value);
-                          //       });
-                          //     } else if (notexist == "false") {
-                          //       getWishdata().then((value) {
-                          //         List existedlist =
-                          //             json.decode(value)[0]["listofProductids"];
-                          //         // print(existedlist);
-                          //         Cartwishlist.wishlist.addAll(existedlist);
-                          //         Map<String, List> body = {
-                          //           "products": Cartwishlist.wishlist,
-                          //         };
-                          //         wishlistupdate(body).then((value) {
-                          //           print(value);
-                          //         });
-                          //       });
-                          //     }
-                          //   });
-                          // } else {
-                          //   Cartwishlist.wishlist.remove(widget.jsonfile);
-                          //   getWishdata().then((value) {
-                          //     List existedlist =
-                          //         json.decode(value)[0]["listofProductids"];
-                          //     print(existedlist);
-                          //     Cartwishlist.wishlist.addAll(existedlist);
-                          //     Map<String, List> body = {
-                          //       "products": Cartwishlist.wishlist,
-                          //     };
-                          //     wishlistupdate(body).then((value) {
-                          //       print(value);
-                          //     });
-                          //   });
-                          // }
-                          // print(Cartwishlist.wishlist);
-
-                          // print(body);
-                        }),
-                  ),
-                ]),
-              ]),
-            ),
-
-            SliverPadding(
-              padding: const EdgeInsets.only(left: 15.0, right: 15.0),
-              sliver: SliverList(
+      body: ModalProgressHUD(
+        inAsyncCall: _isprogress,
+        child: SafeArea(
+          child: Container(
+              child: CustomScrollView(
+            physics: BouncingScrollPhysics(),
+            slivers: <Widget>[
+              SliverList(
                 delegate: SliverChildListDelegate([
-                  // filter items
-                  SizedBox(height: 8.0),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        filterSection(
-                            title: 'Size',
-                            value: sizes[sizeIndex],
-                            onPressed: () {
-                              _openSize(context);
-                            }), // (size)
-                        SizedBox(width: 16.0),
-                        filterSection(
-                            title: 'Color',
-                            value: colors[colorIndex],
-                            onPressed: () {
-                              _openColorFilter(context);
-                            }), // (colour)
-                        SizedBox(width: 5.0),
-                      ]),
-
-                  SizedBox(
-                    height: 22.0,
-                  ),
-
-                  // details
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // name
-                      Text(
-                        widget.productname,
-                        style: Theme.of(context).textTheme.headline4.copyWith(
-                            fontSize: 12.0, fontWeight: FontWeight.w900),
-                      ),
-                      // price
-                      Text(
-                        '\$' + '${widget.price}',
-                        style: Theme.of(context).textTheme.headline3.copyWith(
-                            fontSize: 10.0, fontWeight: FontWeight.w900),
-                      )
-                    ],
-                  ),
-
-                  // sub heading
-                  // Text(
-                  //   'Short blue dress',
-                  //   style: Theme.of(context)
-                  //       .textTheme
-                  //       .bodyText2
-                  //       .copyWith(color: ThemeColor.FILL),
-                  // ),
-
-                  // star rating
-                  SizedBox(
-                    height: 5.0,
-                  ),
-                  RatingBar(
-                    initialRating: 3,
-                    itemSize: 15.0,
-                    minRating: 0,
-                    direction: Axis.horizontal,
-                    allowHalfRating: true,
-                    itemCount: 5,
-                    unratedColor: ThemeColor.FILL,
-                    itemBuilder: (context, _) =>
-                        Icon(Icons.star, color: Colors.amber),
-                    onRatingUpdate: (rating) {},
-                  ),
-
-                  // star rating
-                  SizedBox(height: 16.0),
-                  Text(
-                    widget.productDescrip,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodyText1
-                        .copyWith(color: ThemeColor.FILL),
-                  ),
-
-                  SizedBox(height: 24.0),
-                  Text(
-                    'Ratings & Reviwes',
-                    style: Theme.of(context).textTheme.headline4,
-                  ),
-
-                  SizedBox(height: 20.0),
-
-                  Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text('4.3',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline1
-                                    .copyWith(fontSize: 44.0)),
-                            Text('23 ratings',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .bodyText1
-                                    .copyWith(color: ThemeColor.FILL)),
-                          ],
-                        ),
-                        PrimaryIconsButtonSmall(
+                  Stack(children: [
+                    // prodcuct slider
+                    ProductSlider(
+                      image: widget.imagurl,
+                    ),
+                    // like button
+                    Positioned(
+                      right: 0,
+                      bottom: 0,
+                      child: LikeButtonSimple(
+                          isActive: isFaviroute,
                           onClick: () {
-                            Navigator.pushNamed(
-                              context,
-                              '/add-comment',
-                              arguments: {},
-                            );
-                          },
-                          text: 'Write a review',
-                          icon: Icons.edit,
-                        ),
-                      ]),
+                            // wishlistnew(body)
+                            setState(() {
+                              _isprogress = true;
+                              isFaviroute = !isFaviroute;
+                            });
+                            wishlistexists().then((notexist) {
+                              if (notexist == "true") {
+                                Map<String, List> body = {
+                                  "products": [widget.jsonfile],
+                                };
+                                wishlistnew(body).then((value) {
+                                  print(value);
+                                });
+                              } else if (notexist == "false") {
+                                if (existedwishitemids
+                                    .contains(widget.jsonfile["_id"])) {
+                                  getWishdata().then((value) {
+                                    List existedlist = json.decode(value)[0]
+                                        ["listofProductids"];
+                                    for (var item in existedlist) {
+                                      if (item["_id"] == widget.id) {
+                                        existedlist.remove(item);
+                                        setState(() {
+                                          isFaviroute = false;
+                                        });
+                                        Map<String, List> body = {
+                                          "products": existedlist,
+                                        };
+                                        wishlistupdate(body).then((value) {
+                                          print(value);
+                                        });
+                                      } else {}
+                                    }
+                                  });
+                                } else {
+                                  getWishdata().then((value) {
+                                    List existedlist = json.decode(value)[0]
+                                        ["listofProductids"];
+                                    existedlist.add(widget.jsonfile);
 
-                  SizedBox(height: 25.0),
+                                    Map<String, List> body = {
+                                      "products": existedlist,
+                                    };
+                                    wishlistupdate(body).then((value) {
+                                      print(value);
+                                    });
+                                  });
+                                }
+                                // print(existedwishitemids);
+                                // print(existedwishitemids
+                                //     .contains(widget.jsonfile["_id"]));
+                                // getWishdata().then((value) {
+                                //   // List existedlist =
+                                //   //     json.decode(value)[0]["listofProductids"];
+
+                                //   // print(widget.jsonfile);
+                                // });
+                                // getlistofproductid(existedwishitemids);
+                                // print(existedwishitemids);
+                              }
+                            });
+
+                            //
+                            //
+                            // }
+                            // if (!Cartwishlist.wishlist
+                            //     .contains(widget.jsonfile)) {
+                            //   Cartwishlist.wishlist.add(widget.jsonfile);
+                            //   Map<String, List> body = {
+                            //     "products": Cartwishlist.wishlist,
+                            //   };
+                            //   wishlistexists().then((notexist) {
+                            //     if (notexist == "true") {
+                            //       wishlistnew(body).then((value) {
+                            //         print(value);
+                            //       });
+                            //     } else if (notexist == "false") {
+                            //       getWishdata().then((value) {
+                            //         List existedlist =
+                            //             json.decode(value)[0]["listofProductids"];
+                            //         // print(existedlist);
+                            //         Cartwishlist.wishlist.addAll(existedlist);
+                            //         Map<String, List> body = {
+                            //           "products": Cartwishlist.wishlist,
+                            //         };
+                            //         wishlistupdate(body).then((value) {
+                            //           print(value);
+                            //         });
+                            //       });
+                            //     }
+                            //   });
+                            // } else {
+                            //   Cartwishlist.wishlist.remove(widget.jsonfile);
+                            //   getWishdata().then((value) {
+                            //     List existedlist =
+                            //         json.decode(value)[0]["listofProductids"];
+                            //     print(existedlist);
+                            //     Cartwishlist.wishlist.addAll(existedlist);
+                            //     Map<String, List> body = {
+                            //       "products": Cartwishlist.wishlist,
+                            //     };
+                            //     wishlistupdate(body).then((value) {
+                            //       print(value);
+                            //     });
+                            //   });
+                            // }
+                            // print(Cartwishlist.wishlist);
+
+                            // print(body);
+                            setState(() {
+                              _isprogress = false;
+                            });
+                          }),
+                    ),
+                  ]),
                 ]),
               ),
-            ),
 
-            CommentsList(),
+              SliverPadding(
+                padding: const EdgeInsets.only(left: 15.0, right: 15.0),
+                sliver: SliverList(
+                  delegate: SliverChildListDelegate([
+                    // filter items
+                    SizedBox(height: 8.0),
+                    Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          filterSection(
+                              title: 'Size',
+                              value: sizes[sizeIndex],
+                              onPressed: () {
+                                _openSize(context);
+                              }), // (size)
+                          SizedBox(width: 16.0),
+                          filterSection(
+                              title: 'Color',
+                              value: colors[colorIndex],
+                              onPressed: () {
+                                _openColorFilter(context);
+                              }), // (colour)
+                          SizedBox(width: 5.0),
+                        ]),
 
-            //
-          ],
-        )),
+                    SizedBox(
+                      height: 22.0,
+                    ),
+
+                    // details
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        // name
+                        Text(
+                          widget.productname,
+                          style: Theme.of(context).textTheme.headline4.copyWith(
+                              fontSize: 12.0, fontWeight: FontWeight.w900),
+                        ),
+                        // price
+                        Text(
+                          '\$' + '${widget.price}',
+                          style: Theme.of(context).textTheme.headline3.copyWith(
+                              fontSize: 10.0, fontWeight: FontWeight.w900),
+                        )
+                      ],
+                    ),
+
+                    // sub heading
+                    // Text(
+                    //   'Short blue dress',
+                    //   style: Theme.of(context)
+                    //       .textTheme
+                    //       .bodyText2
+                    //       .copyWith(color: ThemeColor.FILL),
+                    // ),
+
+                    // star rating
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    RatingBar(
+                      initialRating: 3,
+                      itemSize: 15.0,
+                      minRating: 0,
+                      direction: Axis.horizontal,
+                      allowHalfRating: true,
+                      itemCount: 5,
+                      unratedColor: ThemeColor.FILL,
+                      itemBuilder: (context, _) =>
+                          Icon(Icons.star, color: Colors.amber),
+                      onRatingUpdate: (rating) {},
+                    ),
+
+                    // star rating
+                    SizedBox(height: 16.0),
+                    Text(
+                      widget.productDescrip,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyText1
+                          .copyWith(color: ThemeColor.FILL),
+                    ),
+
+                    SizedBox(height: 24.0),
+                    Text(
+                      'Ratings & Reviwes',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
+
+                    SizedBox(height: 20.0),
+
+                    Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('4.3',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline1
+                                      .copyWith(fontSize: 44.0)),
+                              Text('23 ratings',
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .bodyText1
+                                      .copyWith(color: ThemeColor.FILL)),
+                            ],
+                          ),
+                          PrimaryIconsButtonSmall(
+                            onClick: () {
+                              Navigator.pushNamed(
+                                context,
+                                '/add-comment',
+                                arguments: {},
+                              );
+                            },
+                            text: 'Write a review',
+                            icon: Icons.edit,
+                          ),
+                        ]),
+
+                    SizedBox(height: 25.0),
+                  ]),
+                ),
+              ),
+
+              CommentsList(),
+
+              //
+            ],
+          )),
+        ),
       ),
     );
   }
