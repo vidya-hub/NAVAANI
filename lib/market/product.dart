@@ -39,7 +39,7 @@ class _ProductState extends State<Product> {
   @override
   initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 3), () {
+    Future.delayed(Duration(seconds: 2), () {
       setState(() {
         _isprogress = false;
       });
