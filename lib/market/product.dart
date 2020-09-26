@@ -34,7 +34,9 @@ class Product extends StatefulWidget {
 
 class _ProductState extends State<Product> {
   bool isFaviroute = false;
+
   var existedwishitemids = [];
+  var existedcartitemids = [];
   bool _isprogress = true;
   @override
   initState() {
@@ -43,6 +45,21 @@ class _ProductState extends State<Product> {
       setState(() {
         _isprogress = false;
       });
+    });
+    getCartdata().then((value) {
+      if (value == "[]") {
+        print("nothing");
+      } else if (value != "[]") {
+        List existedlist = json.decode(value)[0]["listofProductids"];
+        // print(existedlist.contains(widget.jsonfile["_id"]));
+
+        for (var item in existedlist) {
+          existedcartitemids.add(item["_id"]);
+        }
+        print(existedcartitemids);
+        // print(existedcartitemids.contains(widget.jsonfile["_id"]));
+      }
+      ;
     });
     getWishdata().then((value) {
       if (value == "[]") {
@@ -93,10 +110,33 @@ class _ProductState extends State<Product> {
   //   super.initState();
 
   // }
-  Future wishlistexists() async {
-    var checkwish =
-        "https://whispering-garden-19030.herokuapp.com/orders/checkuserinwishlist/${Cartwishlist.userid}";
-    var response = await http.get(checkwish);
+  Future createNewCart(Map<String, List> body) async {
+    String url =
+        "https://whispering-garden-19030.herokuapp.com/orders/cartstore/${Cartwishlist.userid}";
+    var response = await http.post(url,
+        headers: {"Content-type": "application/json"}, body: json.encode(body));
+    return response.body;
+  }
+
+  Future cartexists() async {
+    var checkcart =
+        "https://whispering-garden-19030.herokuapp.com/orders/checkuserincart/${Cartwishlist.userid}";
+    var response = await http.get(checkcart);
+    return response.body;
+  }
+
+  Future cartupdate(Map<String, List> body) async {
+    var url =
+        "https://whispering-garden-19030.herokuapp.com/orders/updatecartdata/${Cartwishlist.userid}";
+    var response = await http.patch(url,
+        headers: {"Content-type": "application/json"}, body: json.encode(body));
+    return response.body;
+  }
+
+  Future getCartdata() async {
+    var getcart =
+        "https://whispering-garden-19030.herokuapp.com/orders/getcartdatabyid/${Cartwishlist.userid}";
+    var response = await http.get(getcart);
     return response.body;
   }
 
@@ -130,6 +170,13 @@ class _ProductState extends State<Product> {
     return response.body;
   }
 
+  Future wishlistexists() async {
+    var checkwish =
+        "https://whispering-garden-19030.herokuapp.com/orders/checkuserinwishlist/${Cartwishlist.userid}";
+    var response = await http.get(checkwish);
+    return response.body;
+  }
+
   final sizes = ['XS', 'S', 'M', 'L', 'XL'];
   final colors = ['Red', 'Blue', 'Green', 'Orange', 'White'];
   final productName = 'Blue Shirt';
@@ -137,36 +184,8 @@ class _ProductState extends State<Product> {
   int sizeIndex = 0, colorIndex = 0;
 
   onClickShare() {
-    // getlistofproductid(existedwishitemids);
-    // getWishdata().then((value) {
-    //   List existedlist = json.decode(value)[0]["listofProductids"];
     print(existedwishitemids);
-    // });
-    // wishlistexists().then((value) => (print(value)));
   }
-
-  // List existedwishitemids = [];
-  // getlistofproductid(list) {
-  //   // existedwishitemids.clear();
-
-  //   getWishdata().then((value) {
-  //     if (value == "[]") {
-  //       print("nothing");
-  //     } else if (value != "[]") {
-  //       List existedlist = json.decode(value)[0]["listofProductids"];
-
-  //       for (var item in existedlist) {
-  //         setState(() {
-  //           existedwishitemids.add(item["_id"]);
-  //         });
-  //       }
-  //       // return existedwishitemids;
-  //     }
-
-  //     // print(item["_id"] == widget.jsonfile["_id"]);
-  //   });
-  //   print(existedwishitemids);
-  // }
 
   Widget filterSection(
       {@required title, @required value, @required onPressed}) {
@@ -199,6 +218,7 @@ class _ProductState extends State<Product> {
   }
 
   @override
+  // bool _iscartprogress = false;
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
@@ -215,27 +235,44 @@ class _ProductState extends State<Product> {
           padding:
               EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0, bottom: 16.0),
           child: PrimaryButton(
-            text: 'ADD TO CART',
+            text: !existedcartitemids.contains(widget.jsonfile["_id"])
+                ? 'ADD TO CART'
+                : "GO TO CART",
             onClick: () {
-              // if (!Cartwishlist.cartlist.contains(widget.jsonfile)) {
-              Cartwishlist.cartlist.add(widget.jsonfile);
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => CartPage(),
-                ),
-              );
-              // }
-              //  else {
-              //   Navigator.push(
-              //     context,
-              //     MaterialPageRoute(
-              //       builder: (context) => CartPage(),
-              //     ),
-              //
-              // );
-              // }
-              print(Cartwishlist.cartlist);
+              // setState(() {
+              //   _iscartprogress = true;
+              // });
+              cartexists().then((notexist) {
+                if (notexist == "true") {
+                  Map<String, List> body = {
+                    "products": [widget.jsonfile],
+                  };
+                  createNewCart(body).then((value) {
+                    print(value);
+                  });
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => CartPage(),
+                    ),
+                  );
+                } else {
+                  getCartdata().then((value) async {
+                    List existedcartlist =
+                        json.decode(value)[0]["listofProductids"];
+                    setState(() {
+                      existedcartlist.add(widget.jsonfile);
+                    });
+
+                    Map<String, List> body = {
+                      "products": existedcartlist,
+                    };
+                    cartupdate(body).then((value) {
+                      print(value);
+                    });
+                  });
+                }
+              });
             },
           ),
         ),
@@ -263,9 +300,10 @@ class _ProductState extends State<Product> {
                           onClick: () {
                             // wishlistnew(body)
                             setState(() {
-                              _isprogress = true;
+                              // _isprogress = true;
                               isFaviroute = !isFaviroute;
                             });
+
                             wishlistexists().then((notexist) {
                               if (notexist == "true") {
                                 Map<String, List> body = {
@@ -275,101 +313,109 @@ class _ProductState extends State<Product> {
                                   print(value);
                                 });
                               } else if (notexist == "false") {
-                                if (existedwishitemids
-                                    .contains(widget.jsonfile["_id"])) {
-                                  getWishdata().then((value) {
-                                    List existedlist = json.decode(value)[0]
-                                        ["listofProductids"];
-                                    for (var item in existedlist) {
-                                      if (item["_id"] == widget.id) {
-                                        existedlist.remove(item);
-                                        setState(() {
-                                          isFaviroute = false;
-                                        });
-                                        Map<String, List> body = {
-                                          "products": existedlist,
-                                        };
-                                        wishlistupdate(body).then((value) {
-                                          print(value);
-                                        });
-                                      } else {}
-                                    }
-                                  });
-                                } else {
-                                  getWishdata().then((value) {
-                                    List existedlist = json.decode(value)[0]
-                                        ["listofProductids"];
-                                    existedlist.add(widget.jsonfile);
+                                if (existedwishitemids.contains(widget.id)) {
+                                  print("there");
 
+                                  getWishdata().then((value) {
+                                    List existedlist = json.decode(value)[0]
+                                        ["listofProductids"];
+                                    // for (var item in existedlist)
+                                    print(existedlist.length);
+
+                                    setState(() {
+                                      // print();
+                                      existedlist.removeWhere((element) =>
+                                          element["_id"] ==
+                                          widget.jsonfile["_id"]);
+                                    });
                                     Map<String, List> body = {
                                       "products": existedlist,
                                     };
                                     wishlistupdate(body).then((value) {
                                       print(value);
                                     });
+
+                                    getWishdata().then((value) {
+                                      List existedlist = json.decode(value)[0]
+                                          ["listofProductids"];
+                                      // for (var item in existedlist)
+                                      print("new");
+                                      print(existedlist.length);
+                                    });
+                                    existedwishitemids
+                                        .remove(widget.jsonfile["_id"]);
+                                    // print(existedlist.length);
                                   });
                                 }
-                                // print(existedwishitemids);
-                                // print(existedwishitemids
-                                //     .contains(widget.jsonfile["_id"]));
-                                // getWishdata().then((value) {
-                                //   // List existedlist =
-                                //   //     json.decode(value)[0]["listofProductids"];
+                                //  {
 
-                                //   // print(widget.jsonfile);
+                                // if (element["_id"] ==
+                                //     widget.jsonfile["_id"]) {
+                                //   print(existedlist.length);
+                                //   try {
+                                //     setState(() {
+                                //       print(existedlist.remove(element));
+                                //     });
+                                //   } catch (e) {
+                                //     print(e);
+                                //   }
+
+                                //   print(existedlist.length);
+                                // }
                                 // });
-                                // getlistofproductid(existedwishitemids);
-                                // print(existedwishitemids);
+
+                                // setState(() {
+                                // existedlist.remove(item);
+                                // // isFaviroute = false;
+                                // // });.
+                                // print("test");
+                                // print(existedlist);
+                                // }
+                                //   for (var item in existedlist) {
+                                //     if (item["_id"] ==
+                                //         widget.jsonfile["_id"]) {
+                                //       setState(() {
+                                //         existedlist.remove(item);
+                                //         isFaviroute = false;
+                                //       });
+                                //       print("2");
+                                //       print(existedlist);
+                                //       // Map<String, List> body = {
+                                //       //   "products": existedlist,
+                                //       // };
+                                //       // wishlistupdate(body).then((value) {
+                                //       //   print(value);
+                                //       // });
+                                //     } else {}
+                                //   }
+                                // );
+                                // }
+                                else {
+                                  print("notthere");
+                                  // print("1");
+                                  existedwishitemids
+                                      .add(widget.jsonfile["_id"]);
+                                  getWishdata().then((value) {
+                                    List existedlist = json.decode(value)[0]
+                                        ["listofProductids"];
+                                    // print(existedlist);
+                                    setState(() {
+                                      existedlist.add(widget.jsonfile);
+                                    });
+                                    // print(existedlist);
+
+                                    Map<String, List> body = {
+                                      "products": existedlist,
+                                    };
+                                    // print(body);
+                                    wishlistupdate(body).then((value) {
+                                      print(value);
+                                    });
+                                  });
+                                }
                               }
                             });
 
-                            //
-                            //
-                            // }
-                            // if (!Cartwishlist.wishlist
-                            //     .contains(widget.jsonfile)) {
-                            //   Cartwishlist.wishlist.add(widget.jsonfile);
-                            //   Map<String, List> body = {
-                            //     "products": Cartwishlist.wishlist,
-                            //   };
-                            //   wishlistexists().then((notexist) {
-                            //     if (notexist == "true") {
-                            //       wishlistnew(body).then((value) {
-                            //         print(value);
-                            //       });
-                            //     } else if (notexist == "false") {
-                            //       getWishdata().then((value) {
-                            //         List existedlist =
-                            //             json.decode(value)[0]["listofProductids"];
-                            //         // print(existedlist);
-                            //         Cartwishlist.wishlist.addAll(existedlist);
-                            //         Map<String, List> body = {
-                            //           "products": Cartwishlist.wishlist,
-                            //         };
-                            //         wishlistupdate(body).then((value) {
-                            //           print(value);
-                            //         });
-                            //       });
-                            //     }
-                            //   });
-                            // } else {
-                            //   Cartwishlist.wishlist.remove(widget.jsonfile);
-                            //   getWishdata().then((value) {
-                            //     List existedlist =
-                            //         json.decode(value)[0]["listofProductids"];
-                            //     print(existedlist);
-                            //     Cartwishlist.wishlist.addAll(existedlist);
-                            //     Map<String, List> body = {
-                            //       "products": Cartwishlist.wishlist,
-                            //     };
-                            //     wishlistupdate(body).then((value) {
-                            //       print(value);
-                            //     });
-                            //   });
-                            // }
-                            // print(Cartwishlist.wishlist);
-
-                            // print(body);
                             setState(() {
                               _isprogress = false;
                             });

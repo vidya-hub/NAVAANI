@@ -103,7 +103,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List kidGirlUrls = [];
 
   getRefresh() {
-    return null;
+    return "null";
   }
 
   Container getHomeScreenList() {

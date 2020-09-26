@@ -16,8 +16,8 @@ class _WishListState extends State<WishList> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   pricecount() {
     int price = 0;
-    for (var i = 0; i < existedlist.length; i++) {
-      price = price + existedlist[i]["price"];
+    for (var i = 0; i < existedwishlist.length; i++) {
+      price = price + existedwishlist[i]["price"];
     }
     return price;
   }
@@ -43,7 +43,37 @@ class _WishListState extends State<WishList> {
     return response.body;
   }
 
-  List existedlist = [];
+  Future createNewCart(Map<String, List> body) async {
+    String url =
+        "https://whispering-garden-19030.herokuapp.com/orders/cartstore/${Cartwishlist.userid}";
+    var response = await http.post(url,
+        headers: {"Content-type": "application/json"}, body: json.encode(body));
+    return response.body;
+  }
+
+  Future cartexists() async {
+    var checkcart =
+        "https://whispering-garden-19030.herokuapp.com/orders/checkuserincart/${Cartwishlist.userid}";
+    var response = await http.get(checkcart);
+    return response.body;
+  }
+
+  Future cartupdate(Map<String, List> body) async {
+    var url =
+        "https://whispering-garden-19030.herokuapp.com/orders/updatecartdata/${Cartwishlist.userid}";
+    var response = await http.patch(url,
+        headers: {"Content-type": "application/json"}, body: json.encode(body));
+    return response.body;
+  }
+
+  Future getCartdata() async {
+    var getcart =
+        "https://whispering-garden-19030.herokuapp.com/orders/getcartdatabyid/${Cartwishlist.userid}";
+    var response = await http.get(getcart);
+    return response.body;
+  }
+
+  List existedwishlist = [];
   bool _isprogress = true;
   @override
   initState() {
@@ -53,7 +83,8 @@ class _WishListState extends State<WishList> {
         print("nothing");
       } else if (value != "[]") {
         setState(() {
-          existedlist = json.decode(value)[0]["listofProductids"];
+          existedwishlist = json.decode(value)[0]["listofProductids"];
+          print(existedwishlist.length);
         });
         Future.delayed(Duration(milliseconds: 20), () {
           setState(() {
@@ -61,13 +92,6 @@ class _WishListState extends State<WishList> {
           });
           print("there");
         });
-        // return existedlist;
-
-        // print(existedlist.contains(widget.jsonfile["_id"]));
-
-        // for (var item in existedlist) {
-        //   existedwishitemids.add(item["_id"]);
-        // }
       }
     });
   }
@@ -98,7 +122,7 @@ class _WishListState extends State<WishList> {
                         child: Container(
                           child: GestureDetector(
                             onTap: () {
-                              print(existedlist);
+                              print(existedwishlist);
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
@@ -140,7 +164,7 @@ class _WishListState extends State<WishList> {
                             Column(
                               children: <Widget>[
                                 Text(
-                                  "${existedlist.length} Items",
+                                  "${existedwishlist.length} Items",
                                   style: TextStyle(
                                     // fontWeight: FontWeight.w300,
                                     fontSize: 20.0,
@@ -149,7 +173,7 @@ class _WishListState extends State<WishList> {
                                   ),
                                 ),
                                 Text(
-                                  pricecount().toString(),
+                                  "Rs ${pricecount().toString()}/-",
                                   style: TextStyle(
                                     // fontWeight: FontWeight.w300,
                                     fontSize: 20.0,
@@ -169,51 +193,100 @@ class _WishListState extends State<WishList> {
                   // ),
                   // for (var i = 0; i < collectionData.length; i++)
 
-                  existedlist.length != 0
+                  existedwishlist.length != 0
                       ? Expanded(
                           child: ListView.builder(
-                              itemCount: existedlist.length,
+                              itemCount: existedwishlist.length,
                               itemBuilder: (context, index) {
-                                // print(existedlist[index]["name"]);
                                 return Dismissible(
-                                  key: Key('item ${existedlist[index]}'),
+                                  key: ValueKey(existedwishlist[index]),
                                   onDismissed: (DismissDirection direction) {
-                                    // if (direction ==
-                                    //     DismissDirection.startToEnd) {
-                                    //   print("Add to favorite");
-                                    // } else {
-                                    //   print('Remove item');
-                                    // }
                                     setState(() {
-                                      existedlist.remove(existedlist[index]);
+                                      existedwishlist
+                                          .remove(existedwishlist[index]);
                                     });
                                     Map<String, List> body = {
-                                      "products": existedlist,
+                                      "products": existedwishlist,
                                     };
                                     wishlistupdate(body).then((value) {
                                       print(value);
                                     });
                                   },
                                   child: WishListCard(
-                                    name: existedlist[index]["name"],
-                                    imgurl: existedlist[index]["url"],
-                                    price: existedlist[index]["price"],
+                                    name: existedwishlist[index]["name"],
+                                    imgurl: existedwishlist[index]["url"],
+                                    price: existedwishlist[index]["price"],
                                     onTapBag: () {
-                                      setState(() {
-                                        Cartwishlist.cartlist
-                                            .add(Cartwishlist.wishlist[index]);
-                                        Cartwishlist.wishlist.remove(
-                                            Cartwishlist.wishlist[index]);
-                                        print("wish ${Cartwishlist.wishlist}");
-                                        print("cart  ${Cartwishlist.cartlist}");
+                                      getCartdata().then((value) async {
+                                        List existedcartlist =
+                                            json.decode(value)[0]
+                                                ["listofProductids"];
+                                        print(existedcartlist.length);
+
+                                        setState(() {
+                                          existedcartlist
+                                              .add(existedwishlist[index]);
+                                        });
+                                        print(existedcartlist.length);
+
+                                        Map<String, List> body = {
+                                          "products": existedcartlist,
+                                        };
+                                        cartupdate(body).then((value) {
+                                          print(value);
+                                        });
                                       });
+                                      getWishdata().then((value) {
+                                        List existedlist = json.decode(value)[0]
+                                            ["listofProductids"];
+                                        // for (var item in existedlist)
+                                        print(existedlist.length);
+
+                                        setState(() {
+                                          // print();
+                                          // existedlist.removeWhere((element) =>
+                                          //     element["_id"] ==
+                                          //     existedwishlist[index]["_id"]);
+                                          existedwishlist.removeWhere(
+                                              (element) =>
+                                                  element["_id"] ==
+                                                  existedwishlist[index]
+                                                      ["_id"]);
+                                        });
+                                        Map<String, List> body = {
+                                          "products": existedwishlist,
+                                        };
+                                        wishlistupdate(body).then((value) {
+                                          print(value);
+                                        });
+                                      });
+                                      //  print(existedwishlist.length);
+                                      // setState(() {
+                                      // print();
+                                      //   existedwishlist.removeWhere(
+                                      //       (element) =>
+                                      //           element["_id"] ==
+                                      //           existedwishlist[index]);
+                                      // });
+                                      // print(existedwishlist.length);
+                                      // setState(() {
+                                      //   existedwishlist
+                                      //       .remove(existedwishlist[index]);
+                                      // });
+                                      // Map<String, List> body = {
+                                      //   "products": existedwishlist,
+                                      // };
+                                      // wishlistupdate(body).then((value) {
+                                      //   print(value);
+                                      // });
                                     },
                                     onTapDelete: () {
                                       setState(() {
-                                        existedlist.remove(existedlist[index]);
+                                        existedwishlist
+                                            .remove(existedwishlist[index]);
                                       });
                                       Map<String, List> body = {
-                                        "products": existedlist,
+                                        "products": existedwishlist,
                                       };
                                       wishlistupdate(body).then((value) {
                                         print(value);
